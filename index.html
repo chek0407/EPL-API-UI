@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>API Training UI - Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <title>API Training UI - Styled</title>
+        <style>
+            /* --- More Pronounced Decor CSS --- */
+    
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Slightly different font */
+                line-height: 1.7; /* More space between lines */
+                margin: 0;
+                padding: 30px 20px; /* More vertical padding */
+                background: linear-gradient to right, #e0eafc, #cfdef3; /* Subtle gradient background */
+                color: #333;
+                min-height: 100vh; /* Ensure body takes at least full viewport height */
+            }
+    
+            h1 {
+                color: #003366; /* Deeper blue for main title */
+                text-align: center;
+                margin-bottom: 40px; /* More space below title */
+                text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Subtle text shadow */
+            }
+    
+            h2 {
+                 color: #0056b3; /* Primary blue */
+                 border-bottom: 2px solid #007bff; /* Underline for main section headings */
+                 padding-bottom: 8px; /* Space below underline */
+                 margin-top: 30px; /* More space above sections */
+                 margin-bottom: 20px;
+            }
+    
+             h3 {
+                 color: #007bff; /* Lighter blue for sub-section headings */
+                 margin-top: 25px;
+                 margin-bottom: 15px;
+             }
+    
+             h4 {
+                color: #555; /* Dark grey for minor headings */
+                margin-top: 20px;
+                margin-bottom: 10px;
+                border-left: 4px solid #007bff; /* Accent border */
+                padding-left: 10px;
+             }
+    
+    
+            .container {
+                background-color: #fff;
+                margin-bottom: 30px; /* More space between sections */
+                padding: 30px; /* More padding inside containers */
+                border-radius: 10px; /* More rounded corners */
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* More pronounced shadow */
+                border: none; /* Remove standard border */
+            }
+    
+            /* Style for inputs and buttons */
+            input[type="text"],
+            input[type="password"],
+            input[type="number"],
+            button {
+                padding: 12px 18px; /* Even more padding */
+                margin-right: 15px; /* More space between elements */
+                border: 1px solid #a0a0a0; /* More visible border */
+                border-radius: 6px; /* Slightly more rounded */
+                font-size: 1.05em; /* Slightly larger font */
+                vertical-align: middle;
+                box-sizing: border-box; /* Include padding/border in element's total width/height */
+            }
+    
+            button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                cursor: pointer;
+                transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
+                font-weight: bold; /* Bolder button text */
+            }
+    
+            button:hover {
+                background-color: #0056b3;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Stronger shadow on hover */
+            }
+    
+            button:active {
+                background-color: #004085;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                transform: translateY(2px); /* More noticeable press */
+            }
+    
+            /* Style for tables */
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                margin-top: 20px; /* More space above table */
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* More visible table shadow */
+            }
+    
+            th, td {
+                border: 1px solid #ccc; /* More visible border */
+                padding: 15px; /* Even more padding */
+                text-align: left;
+            }
+    
+            th {
+                background-color: #007bff; /* Blue header background */
+                color: white; /* White text on blue header */
+                font-weight: bold;
+            }
+    
+            tbody tr:nth-child(even) {
+                background-color: #f0f0f0; /* More distinct zebra striping */
+            }
+    
+             tbody tr:hover {
+                 background-color: #e9e9e9; /* Highlight row on hover */
+                 cursor: pointer; /* Indicate clickable if you add row click handlers later */
+             }
+    
+    
+            /* Style for the raw response block */
+            #response pre {
+                background-color: #333; /* Dark background */
+                color: #00ff00; /* Green text (like a console) */
+                padding: 20px;
+                border-radius: 8px;
+                overflow-x: auto;
+                border: none; /* Remove border */
+                max-height: 350px; /* Slightly more height */
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; /* Monospace font */
+            }
+    
+            .hidden {
+                display: none;
+            }
+    
+            /* Style for Status Messages (Making them more distinct) */
+            #loginStatus,
+            #addUserStatus,
+            #updateUserStatus,
+            #deleteUserStatus,
+            #eplTeamDetailsStatus,
+            #searchUsersResultsDiv > div:first-child:not(:empty), /* Target the first div if used for message */
+            #getUserResult { /* Add get user result div */
+                margin-top: 20px; /* More space above */
+                padding: 15px; /* More padding */
+                border-radius: 8px;
+                font-weight: bold;
+                 margin-bottom: 15px; /* Space below message */
+            }
+    
+            /* Specific styles for success messages */
+            #loginStatus[style*="green"],
+            #addUserStatus[style*="green"],
+            #updateUserStatus[style*="green"],
+            #deleteUserStatus[style*="green"] {
+                 background-color: #28a745; /* Bootstrap green */
+                 color: white; /* White text */
+                 border: 1px solid #28a745;
+            }
+    
+    
+            /* Specific styles for error messages */
+            #loginStatus[style*="red"],
+            #addUserStatus[style*="red"],
+            #updateUserStatus[style*="red"],
+            #deleteUserStatus[style*="red"],
+            #eplTeamDetailsStatus[style*="red"] {
+                background-color: #dc3545; /* Bootstrap red */
+                color: white; /* White text */
+                border: 1px solid #dc3545;
+            }
+            /* Warning/Info messages (if you set orange or blue color via JS) */
+            #eplTeamDetailsStatus[style*="orange"],
+            #searchUsersResultsDiv > div:first-child:not(:empty)[style*="orange"] {
+                background-color: #ffc107; /* Bootstrap yellow/orange */
+                color: #343a40; /* Dark text */
+                border: 1px solid #ffc107;
+            }
+            /* Add a class or style for info messages if needed */
+    
+    
+            /* Layout adjustment for input groups */
+            .container > input[type="text"],
+            .container > input[type="password"],
+            .container > button {
+                 margin-bottom: 15px; /* Ensure space below inline elements before the next block */
+            }
+            .container > input[type="text"]:last-of-type,
+            .container > input[type="password"]:last-of-type,
+            .container > button:last-of-type {
+                 margin-right: 0; /* Remove right margin on the last item in a line */
+            }
+    
+    
+            /* Basic responsiveness - adjust layout for smaller screens */
+            /* This part still requires data-label attributes in your JS table generation */
+            @media (max-width: 768px) {
+                 body {
+                     padding: 15px;
+                 }
+                 .container {
+                     padding: 20px;
+                 }
+                 input[type="text"],
+                 input[type="password"],
+                 button {
+                     width: calc(100% - 10px); /* Full width minus margin */
+                     margin-right: 0;
+                     margin-bottom: 10px; /* Vertical space between stacked items */
+                     display: block; /* Stack elements */
+                 }
+                button {
+                    width: 100%; /* Full width button */
+                }
+    
+                /* Table stacking on mobile */
+                table, thead, tbody, th, td, tr {
+                    display: block;
+                }
+                thead tr {
+                    position: absolute;
+                    top: -9999px;
+                    left: -9999px;
+                }
+                tr { border: 1px solid #ccc; margin-bottom: 10px; border-radius: 5px; }
+                td {
+                    border: none;
+                    border-bottom: 1px solid #eee;
+                    position: relative;
+                    padding-left: 50%;
+                    text-align: right;
+                }
+                td:before {
+                    position: absolute;
+                    top: 12px; /* Adjust vertical position */
+                    left: 12px; /* Adjust horizontal position */
+                    width: 45%;
+                    padding-right: 10px;
+                    white-space: nowrap;
+                    content: attr(data-label); /* Requires data-label in your JS */
+                    font-weight: bold;
+                    color: #333; /* Dark text for label */
+                    text-align: left;
+                }
+            }
+    
+                            /* Style for inputs specifically within the add player form */
+                .add-player-form input[type="text"],
+                .add-player-form input[type="number"] {
+                    width: 100%; /* Make inputs take up the full width of their container */
+                    box-sizing: border-box; /* Include padding and border in the element's total width */
+                    margin-top: 5px; /* Add a little space above the input, below the label */
+                    margin-bottom: 10px; /* Add some space below each input */
+                    /* Remove or adjust right margin if they are stacked */
+                    margin-right: 0;
+                }
+
+                /* Adjust margin for labels if needed */
+                .add-player-form label {
+                    display: block; /* Ensure label is on its own line above the input */
+                    font-weight: bold;
+                    margin-bottom: 5px; /* Space below the label */
+                }
+
+                /* Adjust spacing for the divs wrapping label/input */
+                .add-player-form > div {
+                    margin-bottom: 15px; /* Space between each label-input group */
+                }
+
+                /* Adjust the button margin as it's no longer next to inputs */
+                .add-player-form button {
+                    margin-top: 10px; /* Space above the button */
+                    margin-right: 0; /* Remove right margin if it should be centered or full-width */
+                    /* If you want the button full width: */
+                    /* width: 100%; */
+                    /* display: block; */
+                }
+
+                /* --- Update Player Form Specific Styles --- */
+
+                /* Style for inputs specifically within the update player form */
+                .update-player-form input[type="text"],
+                .update-player-form input[type="number"] {
+                    width: 100%; /* Make inputs take up the full width of their container */
+                    box-sizing: border-box; /* Include padding and border in the element's total width */
+                    margin-top: 5px; /* Space above input */
+                    margin-bottom: 10px; /* Space below input */
+                    margin-right: 0; /* Remove right margin for stacked elements */
+                }
+
+                /* Style for labels in the update player form */
+                .update-player-form label {
+                    display: block; /* Ensure label is on its own line */
+                    font-weight: bold;
+                    margin-bottom: 5px; /* Space below label */
+                }
+
+                /* Add space between each label-input group */
+                .update-player-form > div {
+                    margin-bottom: 15px;
+                }
+
+                /* Adjust button margin */
+                .update-player-form button {
+                    margin-top: 10px;
+                    margin-right: 0;
+                }
+
+                /* Add visual separation to the sections within the form */
+                /* Target the h4 elements used as section titles */
+                .update-player-form h4 {
+                    margin-top: 25px; /* Space above section title */
+                    margin-bottom: 15px; /* Space below section title */
+                    padding-bottom: 8px; /* Space below the border */
+                    border-bottom: 2px solid #eee; /* Add a subtle border below the title */
+                    color: #0056b3; /* Match main heading color */
+                }
+
+                                /* --- Delete Player Form Specific Styles --- */
+
+                /* Style for inputs specifically within the delete player form */
+                .delete-player-form input[type="text"],
+                .delete-player-form input[type="number"] {
+                    width: 100%; /* Make inputs take up the full width of their container */
+                    box-sizing: border-box; /* Include padding and border in the element's total width */
+                    margin-top: 5px; /* Space above input */
+                    margin-bottom: 10px; /* Space below input */
+                    margin-right: 0; /* Remove right margin for stacked elements */
+                }
+
+                /* Style for labels in the delete player form */
+                .delete-player-form label {
+                    display: block; /* Ensure label is on its own line */
+                    font-weight: bold;
+                    margin-bottom: 5px; /* Space below label */
+                }
+
+                /* Add space between each label-input group */
+                .delete-player-form > div {
+                    margin-bottom: 15px;
+                }
+
+                /* Adjust button margin */
+                .delete-player-form button {
+                    margin-top: 10px;
+                    margin-right: 0;
+                    /* If you want the button full width like inputs: */
+                    /* width: 100%; */
+                    /* display: block; */
+                }
+
+                /* Style for the status message div */
+                #deletePlayerStatusEPL {
+                    margin-top: 15px; /* Add some space above the status message */
+                    font-weight: bold;
+                }
+
+                /* Add these rules to your <style> block - make sure they are NOT nested */
+
+/* --- Clean Styles for the Search Teams or Players section layout (Workaround to force stacking) --- */
+
+#searchEPL_Value.form-control {
+    width: 100% !important; /* Force width */
+    display: block !important; /* Ensure it behaves as a block element */
+    box-sizing: border-box !important; /* Ensure box model is correct */
+    margin: 0 !important; /* Ensure no margins */
+    flex-grow: 1 !important; /* In case parent is a flex container */
+    flex-shrink: 0 !important; /* Prevent shrinking */
+}
+
+/* Ensure the row has no interfering margins or padding */
+.search-epl-form .row.g-3 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    --bs-gutter-x: 0.75rem; /* Ensure Bootstrap gutter variable is available */
+    --bs-gutter-y: 0; /* Reset vertical gutter if needed */
+}
+
+/* Make the columns within this specific row stack vertically */
+.search-epl-form .row.g-3 > [class^="col-"],
+.search-epl-form .row.g-3 > [class*=" col-"] {
+    width: 100% !important; /* Each column takes full width of the row */
+    flex: 0 0 100% !important; /* Ensure they behave as full-width stacked blocks */
+    margin: 0 !important; /* Remove any margins from the columns themselves */
+    /* Apply Bootstrap's horizontal gutter padding using the CSS variable */
+    padding-left: var(--bs-gutter-x, 0.75rem);
+    padding-right: var(--bs-gutter-x, 0.75rem);
+    box-sizing: border-box; /* Maintain consistent box-sizing */
+}
+
+/* Add vertical space between the stacked input/select columns */
+.search-epl-form .row.g-3 .col-md-4, /* Attribute column */
+.search-epl-form .row.g-3 .col-md-5 { /* Value column */
+    margin-bottom: 15px !important; /* Add space below stacked input/select fields */
+    padding-bottom: 0 !important; /* Ensure no bottom padding adds extra space */
+}
+
+
+/* Adjust layout for the buttons column when it stacks */
+.search-epl-form .row.g-3 .col-md-3 {
+    display: flex; /* Use flexbox for button layout */
+    justify-content: center; /* Center buttons horizontally */
+    gap: 10px; /* Add space between buttons */
+    margin-top: 0 !important; /* Ensure no top margin */
+    margin-bottom: 0 !important; /* Ensure no bottom margin */
+    /* Apply Bootstrap's horizontal gutter padding using the CSS variable */
+    padding-left: var(--bs-gutter-x, 0.75rem);
+    padding-right: var(--bs-gutter-x, 0.75rem);
+}
+
+/* Ensure form controls (input/select) within the search form fill their parent column's padding */
+.search-epl-form .form-control,
+.search-epl-form .form-select {
+    width: 100% !important; /* Make input/select take full width of parent column's content box */
+    box-sizing: border-box; /* Include padding/border in width */
+    margin: 0 !important; /* Remove any margins from the form controls themselves */
+}
+
+/* --- End of Clean Search Form Styles --- */
+
+/* Ensure other section styles (like filters) are correct and separate */
+/* Add your corrected filter section styles here as well if they aren't already outside this block */
+/* Make sure the general input/button rule includes input[type="number"] and box-sizing */
+/*
+input[type="text"], input[type="password"], input[type="number"], button {
+    padding: 12px 18px;
+    margin-right: 15px;
+    border: 1px solid #a0a0a0;
+    border-radius: 6px;
+    font-size: 1.05em;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+*/
+/* Corrected filter input/select width/margin rule */
+/*
+.container .row.mb-3 .col-md-3 .form-control,
+.container .row.mb-3 .col-md-6 .form-select {
+     width: 100% !important;
+     box-sizing: border-box;
+     margin: 0 !important;
+}
+*/
+/* Corrected filter column flex/padding/margin */
+/*
+.container .row.mb-3 .col-md-3,
+.container .row.mb-3 .col-md-6 {
+     display: flex;
+     flex-direction: column;
+     justify-content: flex-start;
+     padding-left: var(--bs-gutter-x, 0.75rem);
+     padding-right: var(--bs-gutter-x, 0.75rem);
+     margin-left: 0 !important;
+     margin-right: 0 !important;
+}
+*/
+/* Add space below labels in filter section if using column flex layout */
+/*
+.container .row.mb-3 .col-md-3 label,
+.container .row.mb-3 .col-md-6 label {
+    margin-bottom: 5px;
+}
+*/
+    
+        </style>
+    </head>
+<body>
+    <h1>API Training Interface</h1>
+
+    <div class="container my-4 p-3 shadow rounded">
+        <h2>API Base URL</h2>
+        <label for="apiBaseUrl">Set API Endpoint:</label>
+        <input type="text" class="form-control" id="apiBaseUrl" value="http://ec2-13-60-86-85.eu-north-1.compute.amazonaws.com:5000" size="50">
+        <button class="btn btn-primary" onclick="setApiUrl()">Set URL</button>
+        <p><small>Remember to include http:// or https://</small></p>
+    </div>
+
+
+    <div class="container my-4 p-3 shadow rounded">
+        <h2>Login</h2>
+        <input type="text" class="form-control" id="loginUsername" placeholder="Username" value="vladi">
+        <input type="password" id="loginPassword" placeholder="Password" value="Aa111111">
+        <button class="btn btn-primary" onclick="loginUser()">Login</button>
+        <p id="loginStatus"></p>
+    </div>
+
+    <div class="container protected-content hidden">
+        <h2>Authenticated Endpoints</h2>
+
+        <button class="btn btn-primary w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#userCollapseContent" aria-expanded="true" aria-controls="userCollapseContent">
+          User Management
+        </button>
+
+        <div class="collapse show" id="userCollapseContent">
+          <div class="user-management-content">
+            <div class="container my-4 p-3 shadow rounded">
+                <h4>Get All Users (/users_list GET)</h4>
+                <button class="btn btn-primary" onclick="getAllUsers()">List Users</button>
+                <div id="userListResults">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>UserId</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>CreatedAt</th>
+                            <th>Preferences</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="container my-4 p-3 shadow rounded">
+                <h4>Get User by ID (/get_user/&lt;user_id&gt; GET)</h4>
+                <input type="text" class="form-control" id="getUserId" placeholder="Enter User ID">
+                <button class="btn btn-primary" onclick="getUserById()">Get User</button>
+                <div id="getUserResult"></div>
+            </div>
+
+             <div class="container my-4 p-3 shadow rounded">
+                <h4>Add New User (/add_user POST)</h4>
+                <input type="text" class="form-control" id="addUser_UserId" placeholder="User ID (required)">
+                <input type="text" class="form-control" id="addUser_Name" placeholder="Name (required)">
+                <input type="text" class="form-control" id="addUser_Email" placeholder="Email (optional)">
+                <button class="btn btn-primary" onclick="addUser()">Add User</button>
+                <div id="addUserStatus"></div>
+            </div>
+
+            <div class="container my-4 p-3 shadow rounded">
+                <h4>Update User (/update_user/&lt;user_id&gt; PUT)</h4>
+                <input type="text" class="form-control" id="updateUser_UserId" placeholder="User ID to update">
+                <input type="text" class="form-control" id="updateUser_Name" placeholder="New Name (optional)">
+                <input type="text" class="form-control" id="updateUser_Email" placeholder="New Email (optional)">
+                 <button class="btn btn-primary" onclick="updateUser()">Update User</button>
+                <div id="updateUserStatus"></div>
+            </div>
+
+            <div class="container my-4 p-3 shadow rounded">
+                <h4>Delete User (/delete_user/&lt;user_id&gt; DELETE)</h4>
+                <input type="text" class="form-control" id="deleteUserId" placeholder="User ID to delete">
+                <button class="btn btn-primary" onclick="deleteUser()">Delete User</button>
+                <div id="deleteUserStatus"></div>
+            </div>
+
+            <div class="container my-4 p-3 shadow rounded">
+                <h4>Search Users (/search_users GET)</h4>
+                <input type="text" class="form-control" id="searchUsers_Name" placeholder="Search by Name (optional)">
+                <input type="text" class="form-control" id="searchUsers_Email" placeholder="Search by Email (optional)">
+                <button class="btn btn-primary" onclick="searchUsers()">Search</button>
+                <div id="searchUsersResults"></div>
+            </div>
+
+            </div>
+        </div>
+        <hr> <button class="btn btn-primary w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#eplCollapseContent" aria-expanded="false" aria-controls="eplCollapseContent">
+           EPL Data
+         </button>
+
+         <div class="collapse" id="eplCollapseContent">
+             <div class="epl-data-content">
+                 <div class="container my-4 p-3 shadow rounded">
+                <h4>List All Teams (/epl/teams GET)</h4>
+                <button class="btn btn-primary" onclick="getAllTeamsEPL()">List EPL Teams</button>
+                <button class="btn btn-secondary" onclick="clearEPLTeamsList()">Clear List</button>
+                <div id="eplTeamListResults">
+                     <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>TeamID</th>
+                                <th>TeamName</th>
+                                <th>Stadium</th>
+                                <th>Founded</th>
+                                <th>Manager</th>
+                                </tr>
+                        </thead>
+                        <tbody id="eplTeamTableBody">
+                            </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="container my-4 p-3 shadow rounded">
+            <h4>Get Team Details & Players (/epl/teams/&lt;team_id&gt;/details GET)</h4>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="getEplTeamDetails_TeamId" class="form-label">Team ID:</label>
+                    <input type="text" class="form-control" id="getEplTeamDetails_TeamId" placeholder="e.g., ARS">
+                </div>
+                <div class="col-md-8 d-flex align-items-end">
+                     <button class="btn btn-primary me-2" onclick="getEplTeamDetails()">Get Details</button>
+                     <button class="btn btn-secondary" onclick="clearEPLTeamDetails()">Clear Details</button>
+                </div>
+            </div>
+
+            <h5>Filter Players (Optional)</h5>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <label for="filterPosition" class="form-label">Position:</label>
+                    <input type="text" class="form-control" id="filterPosition" placeholder="e.g. GK">
+                </div>
+                <div class="col-md-3">
+                    <label for="filterMinAge" class="form-label">Min Age:</label>
+                    <input type="number" class="form-control" id="filterMinAge" placeholder="e.g., 20" min="0">
+                </div>
+                <div class="col-md-3">
+                    <label for="filterMaxAge" class="form-label">Max Age:</label>
+                    <input type="number" class="form-control" id="filterMaxAge" placeholder="e.g., 30" min="0">
+                </div>
+                 <div class="col-md-3">
+                    <label for="filterNumber" class="form-label">Jersey Number:</label>
+                    <input type="number" class="form-control" id="filterNumber" placeholder="e.g., 7" min="0">
+                </div>
+            </div>
+
+            <h5>Sort Players (Optional)</h5>
+            <div class="row mb-3">
+                 <div class="col-md-6">
+                    <label for="sortPlayersBy" class="form-label">Sort By:</label>
+                    <select class="form-select" id="sortPlayersBy">
+                        <option value="">-- Select Field --</option>
+                        <option value="PlayerName">Name</option>
+                        <option value="Position">Position</option>
+                        <option value="Number">Number</option>
+                        <option value="Age">Age</option>
+                        </select>
+                </div>
+                 <div class="col-md-6">
+                    <label for="sortPlayersOrder" class="form-label">Order:</label>
+                    <select class="form-select" id="sortPlayersOrder">
+                         <option value="asc">Ascending</option>
+                         <option value="desc">Descending</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div id="eplTeamDetailsResults">
+                 <div id="teamDetailsArea">
+                     <h6>Team Details:</h6>
+                     <p>Select a team and click "Get Details" to see information here.</p>
+                 </div>
+
+                 <div id="teamPlayersArea" class="hidden">
+                     <h6>Players:</h6>
+                     <table class="table table-striped table-bordered table-hover">
+                         <thead>
+                             <tr>
+                                 <th>Name</th>
+                                 <th>Position</th>
+                                 <th>Number</th>
+                                 <th>Age</th>
+                                 </tr>
+                         </thead>
+                         <tbody id="eplTeamPlayersTableBody">
+                             </tbody>
+                     </table>
+                 </div>
+                  <div id="eplTeamDetailsStatus"></div>
+            </div>
+         </div>
+
+         <div class="container">
+            <h4>Search Teams or Players (/epl/search?key=&lt;attribute&gt;&value=&lt;value&gt; GET)</h4>
+            <p>Search for teams or players by a specific attribute. Uses a "contains" filter (case-sensitive).</p>
+            <div class="search-epl-form row g-3"> 
+                <div class="col-md-4">
+                    <label for="searchEPL_Key" class="form-label">Attribute (Key):</label>
+                    <select class="form-select" id="searchEPL_Key">
+                         <option value="">-- Select Attribute --</option>
+                        <option value="TeamName">Team Name</option>
+                        <option value="PlayerName">Player Name</option>
+                        <option value="Position">Position</option>
+                        <option value="TeamID">Team ID</option>
+                        <option value="Stadium">Stadium</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Age">Age (numeric)</option>
+                        <option value="Number">Jersey Number (numeric)</option>
+                        </select>
+                </div>
+                <div class="col-md-5">
+                    <label for="searchEPL_Value" class="form-label">Value:</label>
+                    <input type="text" class="form-control" id="searchEPL_Value" placeholder="Enter search term">
+                </div>
+                 <div class="col-md-3 d-flex align-items-end">
+                    <button class="btn btn-primary me-2" onclick="searchEPLEntities()">Search</button>
+                    <button class="btn btn-secondary" onclick="clearEPLEntitySearch()">Clear Search</button>
+                </div>
+            </div>
+            <div id="searchPlayerResultsEPL" class="mt-3">
+                 <table>
+                    <thead>
+                        <tr>
+                            <th>TeamID</th>
+                            <th>EntityType</th>
+                            <th>Details</th>
+                            </tr>
+                    </thead>
+                    <tbody id="searchPlayerTableBodyEPL">
+                        </tbody>
+                </table>
+                 <div id="searchPlayerStatusEPL"></div>
+            </div>
+        </div>
+
+                    <div class="container">
+                        <h4>Update Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; PUT)</h4> <p>Enter the player's Team ID and **Jersey Number** to identify them in the URL, then enter the fields you want to update in the body.</p>
+                        <div class="update-player-form">
+                            <h5>Identify Player (for URL Path):</h5>
+                            <div>
+                                <label for="updatePlayer_TeamID_URL">Team ID:</label>
+                                <input type="text" id="updatePlayer_TeamID_URL" placeholder="e.g., ARS">
+                            </div>
+                             <div>
+                                <label for="updatePlayer_Number_URL">Jersey Number:</label> <input type="number" id="updatePlayer_Number_URL" placeholder="e.g., 7"> </div>
+
+                            <h5>Update Fields (Optional - only fill what you want to change, sent in Body):</h5>
+                            <div>
+                                <label for="updatePlayer_PlayerName_Body">Player Name:</label>
+                                <input type="text" id="updatePlayer_PlayerName_Body" placeholder="e.g., New Player Name">
+                            </div>
+                             <div>
+                                <label for="updatePlayer_Position_Body">Position:</label>
+                                <input type="text" id="updatePlayer_Position_Body" placeholder="e.g., FW">
+                            </div>
+                             <div>
+                                <label for="updatePlayer_Age_Body">Age:</label>
+                                <input type="number" id="updatePlayer_Age_Body" placeholder="e.g., 24">
+                            </div>
+                            <div>
+                                <label for="updatePlayer_Number_Body">Jersey Number:</label> <input type="number" id="updatePlayer_Number_Body" placeholder="e.g., 9">
+                            </div>
+
+
+                            <button onclick="updatePlayerEPL()">Update Player</button>
+                        </div>
+                        <div id="updatePlayerStatusEPL" class="mt-3"></div>
+                    </div>
+
+                    <div class="container">
+                        <h4>Delete Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; DELETE)</h4>
+                        <p>Enter the player's Team ID and Jersey Number to permanently delete them.</p>
+                        <div class="delete-player-form">
+                            <div>
+                                <label for="deletePlayer_TeamID">Team ID:</label>
+                                <input type="text" id="deletePlayer_TeamID" placeholder="e.g., ARS">
+                            </div>
+                             <div>
+                                <label for="deletePlayer_Number">Jersey Number:</label>
+                                <input type="number" id="deletePlayer_Number" placeholder="e.g., 7">
+                            </div>
+
+                            <button onclick="deletePlayerEPL()">Delete Player</button>
+                        </div>
+                        <div id="deletePlayerStatusEPL" class="mt-3"></div>
+                    </div>
+                 </div> 
+            <div class="container my-4 p-3 shadow rounded">
+        <h2>API Response</h2>
+        <div id="response">
+            <pre>Awaiting API call...</pre>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+</body>
+</html>
