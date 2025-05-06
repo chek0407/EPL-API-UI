@@ -22,19 +22,54 @@ const sortPlayersOrderSelect = document.getElementById('sortPlayersOrder');
 const searchEPLKeySelect = document.getElementById('searchEPL_Key');
 const searchEPLValueInput = document.getElementById('searchEPL_Value');
 
+
+function showProtectedContent() {
+    // This function removes the Bootstrap 'd-none' class to make the element visible
+    if (protectedContent) { // Check if the element was successfully found
+        protectedContent.classList.remove('d-none'); // Use Bootstrap's d-none class
+        // If you don't have a wrapper, remove 'd-none' from sections individually:
+        // document.getElementById('listTeamsSection').classList.remove('d-none');
+        // ...
+    } else {
+         console.error("Error: .protected-content element not found!");
+    }
+}
+
+function hideProtectedContent() {
+    // This function adds the Bootstrap 'd-none' class to hide the element
+    if (protectedContent) { // Check if the element was successfully found
+        protectedContent.classList.add('d-none'); // Use Bootstrap's d-none class
+        // If you don't have a wrapper, add 'd-none' to sections individually:
+        // document.getElementById('listTeamsSection').classList.add('d-none');
+        // ...
+    } else {
+         console.error("Error: .protected-content element not found!");
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initially hide the protected content sections when the page loads
+    if (protectedContent) { // Check if the element was found
+        protectedContent.style.display = 'none'; // Hide the container
+        // Optional: Add a message to the response area
+        responseDiv.textContent = 'Please log in to use the API.';
+    }
+
+});
+
 // --- Helper Functions ---
 
 function updateResponseDisplay(data) {
     responseDiv.textContent = JSON.stringify(data, null, 2);
 }
 
-function showProtectedContent() {
-    protectedContent.classList.remove('hidden');
-}
+// function showProtectedContent() {
+//     protectedContent.classList.remove('hidden');
+// }
 
-function hideProtectedContent() {
-    protectedContent.classList.add('hidden');
-}
+// function hideProtectedContent() {
+//     protectedContent.classList.add('hidden');
+// }
 
 function setApiUrl() {
     const inputUrl = document.getElementById('apiBaseUrl').value.trim();
@@ -86,6 +121,25 @@ async function loginUser() {
         hideProtectedContent();
     }
 }
+
+async function handleResponse(response, endpoint) {
+    // Inside the login success block (where status is 2xx and endpoint is /login):
+    // This code already correctly shows the protected content after successful login:
+    if (response.status >= 200 && response.status < 300 && endpoint === '/login') {
+         if (protectedContent) {
+              protectedContent.style.display = 'block'; // Or flex/grid, etc. depending on its intended layout
+         }
+         loginStatusP.textContent = 'Login Successful!';
+         responseDiv.textContent = 'Login successful. You can now interact with the API.';
+
+    } else if (response.status >= 400 && endpoint === '/login') {
+        // Inside the login failure block:
+         if (protectedContent) {
+             protectedContent.style.display = 'none'; // This already hides it on failure
+         }
+    }
+}
+
 
 async function callApi(endpoint, method = 'GET', body = null) {
     if (!jwtToken) {

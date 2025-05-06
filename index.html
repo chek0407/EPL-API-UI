@@ -3,351 +3,96 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>API Training UI - Bootstrap</title>
-        <link href="./bootstrap.min.css" rel="stylesheet">
         <title>API Training UI - Styled</title>
-        <!-- <style>
-            /* --- More Pronounced Decor CSS --- */
+        <link href="./bootstrap.min.css" rel="stylesheet">
     
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Slightly different font */
-                line-height: 1.7; /* More space between lines */
-                margin: 0;
-                padding: 30px 20px; /* More vertical padding */
-                background: linear-gradient to right, #e0eafc, #cfdef3; /* Subtle gradient background */
-                color: #333;
-                min-height: 100vh; /* Ensure body takes at least full viewport height */
+        <style>
+            /* Minimal custom styles to ensure consistency for components and spacing */
+    
+            /* Ensure inputs, selects, and labels within container rows have basic display, width, and spacing */
+            .container .row input[type="text"],
+            .container .row input[type="password"], /* Add password input */
+            .container .row input[type="number"],
+            .container .row select.form-select,
+            .container .row label {
+                display: block; /* Stack label and input/select vertically within the column */
+                width: 100%; /* Make input/select/label fill its column's width */
+                box-sizing: border-box; /* Include padding/border in width */
+                margin-bottom: .5rem; /* Standard spacing below label/input */
             }
     
-            h1 {
-                color: #003366; /* Deeper blue for main title */
-                text-align: center;
-                margin-bottom: 40px; /* More space below title */
-                text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Subtle text shadow */
+            /* Ensure form controls (input/select) within container rows have basic Bootstrap styling */
+            .container .row .form-control,
+            .container .row .form-select {
+                 /* Inherit padding, font, color, background, border, border-radius, transitions from theme */
+                 /* This rule ensures core form-control/form-select properties are set if theme misses them */
+                display: block; /* Ensure block behavior */
+                width: 100%; /* Make them fill their container */
+                padding: .375rem .75rem; /* Standard Bootstrap padding */
+                font-size: 1rem; /* Standard Bootstrap font size */
+                font-weight: 400; /* Standard font weight */
+                line-height: 1.5; /* Standard line height */
+                color: var(--bs-body-color); /* Use Bootstrap variable for text color */
+                background-color: var(--bs-body-bg); /* Use Bootstrap variable for background color */
+                background-clip: padding-box; /* Standard background clip */
+                border: var(--bs-border-width) solid var(--bs-border-color); /* Use Bootstrap variables for border */
+                -webkit-appearance: none; /* Remove default browser styling */
+                -moz-appearance: none;
+                appearance: none;
+                border-radius: var(--bs-border-radius); /* Use Bootstrap variable for border radius */
+                transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out; /* Standard transitions */
             }
     
-            h2 {
-                 color: #0056b3; /* Primary blue */
-                 border-bottom: 2px solid #007bff; /* Underline for main section headings */
-                 padding-bottom: 8px; /* Space below underline */
-                 margin-top: 30px; /* More space above sections */
-                 margin-bottom: 20px;
-            }
     
-             h3 {
-                 color: #007bff; /* Lighter blue for sub-section headings */
-                 margin-top: 25px;
-                 margin-bottom: 15px;
+             /* Ensure buttons within container rows have basic Bootstrap styling */
+             .container .row .btn {
+                 /* Inherit padding, font, color, background, border, border-radius, transitions from theme */
+                 /* This rule ensures core button properties are set if theme misses them */
+                 display: inline-block; /* Standard button display */
+                 font-weight: 400; /* Standard font weight */
+                 line-height: 1.5; /* Standard line height */
+                 color: var(--bs-btn-color, var(--bs-body-color)); /* Theme button text color */
+                 text-align: center; /* Standard text align */
+                 text-decoration: none; /* Standard text decoration */
+                 vertical-align: middle; /* Standard vertical align */
+                 cursor: pointer; /* Indicate clickable */
+                 -webkit-user-select: none;
+                 -moz-user-select: none;
+                 user-select: none;
+                 background-color: var(--bs-btn-bg, transparent); /* Theme button background */
+                 border: var(--bs-border-width) solid var(--bs-btn-border-color, transparent); /* Theme button border */
+                 padding: var(--bs-btn-padding-y, .375rem) var(--bs-btn-padding-x, .75rem); /* Standard Bootstrap padding */
+                 font-size: var(--bs-btn-font-size, 1rem); /* Standard Bootstrap font size */
+                 border-radius: var(--bs-btn-border-radius, var(--bs-border-radius)); /* Standard border radius */
+                 transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out; /* Standard transitions */
              }
     
-             h4 {
-                color: #555; /* Dark grey for minor headings */
-                margin-top: 20px;
-                margin-bottom: 10px;
-                border-left: 4px solid #007bff; /* Accent border */
-                padding-left: 10px;
+             /* Add space below columns in containers that use rows */
+             .container .row > [class^="col-"],
+             .container .row > [class*=" col-"] {
+                 padding-top: var(--bs-gutter-y, 0); /* Ensure vertical gutter from Bootstrap is applied */
+                 padding-bottom: var(--bs-gutter-y, 0); /* Ensure vertical gutter from Bootstrap is applied */
              }
     
+             /* Explicitly add margin-bottom to columns for vertical spacing if theme/Bootstrap g-3 doesn't provide enough */
+             .container .row .col-md-4,
+             .container .row .col-md-5,
+             .container .row .col-md-3,
+             .container .row .col { /* For nested columns in Get Details */
+                  margin-bottom: 1rem; /* Add 1rem space below each column in these sections */
+             }
     
-            .container {
-                background-color: #fff;
-                margin-bottom: 30px; /* More space between sections */
-                padding: 30px; /* More padding inside containers */
-                border-radius: 10px; /* More rounded corners */
-                box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* More pronounced shadow */
-                border: none; /* Remove standard border */
-            }
-    
-            button {
-                background-color: #007bff;
-                color: white;
-                border: none;
-                cursor: pointer;
-                transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
-                font-weight: bold; /* Bolder button text */
-            }
-    
-            button:hover {
-                background-color: #0056b3;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Stronger shadow on hover */
-            }
-    
-            button:active {
-                background-color: #004085;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-                transform: translateY(2px); /* More noticeable press */
-            }
-    
-            /* Style for tables */
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                margin-top: 20px; /* More space above table */
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15); /* More visible table shadow */
-            }
-    
-            th, td {
-                border: 1px solid #ccc; /* More visible border */
-                padding: 15px; /* Even more padding */
-                text-align: left;
-            }
-    
-            th {
-                background-color: #007bff; /* Blue header background */
-                color: white; /* White text on blue header */
-                font-weight: bold;
-            }
-    
-            tbody tr:nth-child(even) {
-                background-color: #f0f0f0; /* More distinct zebra striping */
-            }
-    
-             tbody tr:hover {
-                 background-color: #e9e9e9; /* Highlight row on hover */
-                 cursor: pointer; /* Indicate clickable if you add row click handlers later */
+             /* Remove bottom margin for the button column in Search/Add/Delete if needed */
+             .container .row .col-md-3.d-flex.align-items-end { /* Search buttons column */
+                 margin-bottom: 0 !important; /* Remove the margin below the button column */
+             }
+             /* Remove bottom margin for button columns in Add/Update if you put them in separate cols */
+             .container .row .col-md-12 { /* Full width button column in Add/Update, Delete */
+                 margin-bottom: 0 !important; /* Remove the margin below the full-width button column */
              }
     
     
-            /* Style for the raw response block */
-            #response pre {
-                background-color: #333; /* Dark background */
-                color: #00ff00; /* Green text (like a console) */
-                padding: 20px;
-                border-radius: 8px;
-                overflow-x: auto;
-                border: none; /* Remove border */
-                max-height: 350px; /* Slightly more height */
-                white-space: pre-wrap;
-                word-wrap: break-word;
-                font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; /* Monospace font */
-            }
-    
-            .hidden {
-                display: none;
-            }
-    
-            /* Style for Status Messages (Making them more distinct) */
-            #loginStatus,
-            #addUserStatus,
-            #updateUserStatus,
-            #deleteUserStatus,
-            #eplTeamDetailsStatus,
-            #searchUsersResultsDiv > div:first-child:not(:empty), /* Target the first div if used for message */
-            #getUserResult { /* Add get user result div */
-                margin-top: 20px; /* More space above */
-                padding: 15px; /* More padding */
-                border-radius: 8px;
-                font-weight: bold;
-                 margin-bottom: 15px; /* Space below message */
-            }
-    
-            /* Specific styles for success messages */
-            #loginStatus[style*="green"],
-            #addUserStatus[style*="green"],
-            #updateUserStatus[style*="green"],
-            #deleteUserStatus[style*="green"] {
-                 background-color: #28a745; /* Bootstrap green */
-                 color: white; /* White text */
-                 border: 1px solid #28a745;
-            }
-    
-    
-            /* Specific styles for error messages */
-            #loginStatus[style*="red"],
-            #addUserStatus[style*="red"],
-            #updateUserStatus[style*="red"],
-            #deleteUserStatus[style*="red"],
-            #eplTeamDetailsStatus[style*="red"] {
-                background-color: #dc3545; /* Bootstrap red */
-                color: white; /* White text */
-                border: 1px solid #dc3545;
-            }
-            /* Warning/Info messages (if you set orange or blue color via JS) */
-            #eplTeamDetailsStatus[style*="orange"],
-            #searchUsersResultsDiv > div:first-child:not(:empty)[style*="orange"] {
-                background-color: #ffc107; /* Bootstrap yellow/orange */
-                color: #343a40; /* Dark text */
-                border: 1px solid #ffc107;
-            }
-            /* Add a class or style for info messages if needed */
-    
-    
-            /* Layout adjustment for input groups */
-            .container > input[type="text"],
-            .container > input[type="password"],
-            .container > button {
-                 margin-bottom: 15px; /* Ensure space below inline elements before the next block */
-            }
-            .container > input[type="text"]:last-of-type,
-            .container > input[type="password"]:last-of-type,
-            .container > button:last-of-type {
-                 margin-right: 0; /* Remove right margin on the last item in a line */
-            }
-    
-    
-            /* Basic responsiveness - adjust layout for smaller screens */
-            /* This part still requires data-label attributes in your JS table generation */
-            @media (max-width: 768px) {
-                 body {
-                     padding: 15px;
-                 }
-                 .container {
-                     padding: 20px;
-                 }
-                 input[type="text"],
-                 input[type="password"],
-                 button {
-                     width: calc(100% - 10px); /* Full width minus margin */
-                     margin-right: 0;
-                     margin-bottom: 10px; /* Vertical space between stacked items */
-                     display: block; /* Stack elements */
-                 }
-                button {
-                    width: 100%; /* Full width button */
-                }
-    
-                /* Table stacking on mobile */
-                table, thead, tbody, th, td, tr {
-                    display: block;
-                }
-                thead tr {
-                    position: absolute;
-                    top: -9999px;
-                    left: -9999px;
-                }
-                tr { border: 1px solid #ccc; margin-bottom: 10px; border-radius: 5px; }
-                td {
-                    border: none;
-                    border-bottom: 1px solid #eee;
-                    position: relative;
-                    padding-left: 50%;
-                    text-align: right;
-                }
-                td:before {
-                    position: absolute;
-                    top: 12px; /* Adjust vertical position */
-                    left: 12px; /* Adjust horizontal position */
-                    width: 45%;
-                    padding-right: 10px;
-                    white-space: nowrap;
-                    content: attr(data-label); /* Requires data-label in your JS */
-                    font-weight: bold;
-                    color: #333; /* Dark text for label */
-                    text-align: left;
-                }
-            }
-    
-                            /* Style for inputs specifically within the add player form */
-                .add-player-form input[type="text"],
-                .add-player-form input[type="number"] {
-                    width: 100%; /* Make inputs take up the full width of their container */
-                    box-sizing: border-box; /* Include padding and border in the element's total width */
-                    margin-top: 5px; /* Add a little space above the input, below the label */
-                    margin-bottom: 10px; /* Add some space below each input */
-                    /* Remove or adjust right margin if they are stacked */
-                    margin-right: 0;
-                }
-
-                /* Adjust margin for labels if needed */
-                .add-player-form label {
-                    display: block; /* Ensure label is on its own line above the input */
-                    font-weight: bold;
-                    margin-bottom: 5px; /* Space below the label */
-                }
-
-                /* Adjust spacing for the divs wrapping label/input */
-                .add-player-form > div {
-                    margin-bottom: 15px; /* Space between each label-input group */
-                }
-
-                /* Adjust the button margin as it's no longer next to inputs */
-                .add-player-form button {
-                    margin-top: 10px; /* Space above the button */
-                    margin-right: 0; /* Remove right margin if it should be centered or full-width */
-                    /* If you want the button full width: */
-                    /* width: 100%; */
-                    /* display: block; */
-                }
-
-                /* --- Update Player Form Specific Styles --- */
-
-                /* Style for inputs specifically within the update player form */
-                .update-player-form input[type="text"],
-                .update-player-form input[type="number"] {
-                    width: 100%; /* Make inputs take up the full width of their container */
-                    box-sizing: border-box; /* Include padding and border in the element's total width */
-                    margin-top: 5px; /* Space above input */
-                    margin-bottom: 10px; /* Space below input */
-                    margin-right: 0; /* Remove right margin for stacked elements */
-                }
-
-                /* Style for labels in the update player form */
-                .update-player-form label {
-                    display: block; /* Ensure label is on its own line */
-                    font-weight: bold;
-                    margin-bottom: 5px; /* Space below label */
-                }
-
-                /* Add space between each label-input group */
-                .update-player-form > div {
-                    margin-bottom: 15px;
-                }
-
-                /* Adjust button margin */
-                .update-player-form button {
-                    margin-top: 10px;
-                    margin-right: 0;
-                }
-
-                /* Add visual separation to the sections within the form */
-                /* Target the h4 elements used as section titles */
-                .update-player-form h4 {
-                    margin-top: 25px; /* Space above section title */
-                    margin-bottom: 15px; /* Space below section title */
-                    padding-bottom: 8px; /* Space below the border */
-                    border-bottom: 2px solid #eee; /* Add a subtle border below the title */
-                    color: #0056b3; /* Match main heading color */
-                }
-
-                                /* --- Delete Player Form Specific Styles --- */
-
-                /* Style for inputs specifically within the delete player form */
-                .delete-player-form input[type="text"],
-                .delete-player-form input[type="number"] {
-                    width: 100%; /* Make inputs take up the full width of their container */
-                    box-sizing: border-box; /* Include padding and border in the element's total width */
-                    margin-top: 5px; /* Space above input */
-                    margin-bottom: 10px; /* Space below input */
-                    margin-right: 0; /* Remove right margin for stacked elements */
-                }
-
-                /* Style for labels in the delete player form */
-                .delete-player-form label {
-                    display: block; /* Ensure label is on its own line */
-                    font-weight: bold;
-                    margin-bottom: 5px; /* Space below label */
-                }
-
-                /* Add space between each label-input group */
-                .delete-player-form > div {
-                    margin-bottom: 15px;
-                }
-
-                /* Adjust button margin */
-                .delete-player-form button {
-                    margin-top: 10px;
-                    margin-right: 0;
-                    /* If you want the button full width like inputs: */
-                    /* width: 100%; */
-                    /* display: block; */
-                }
-
-                /* Style for the status message div */
-                #deletePlayerStatusEPL {
-                    margin-top: 15px; /* Add some space above the status message */
-                    font-weight: bold;
-                } 
-        </style> -->
+        </style>
     </head>
 <body>
     <h1>API Training Interface</h1>
@@ -369,7 +114,7 @@
         <p id="loginStatus"></p>
     </div>
 
-    <div class="container protected-content hidden">
+    <div class="container protected-content">
         <h2>Authenticated Endpoints</h2>
 
         <button class="btn btn-primary w-100 text-start" type="button" data-bs-toggle="collapse" data-bs-target="#userCollapseContent" aria-expanded="true" aria-controls="userCollapseContent">
@@ -592,57 +337,63 @@
             </div>
         </div>
 
-                    <div class="container">
-                        <h4>Update Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; PUT)</h4> <p>Enter the player's Team ID and **Jersey Number** to identify them in the URL, then enter the fields you want to update in the body.</p>
-                        <div class="update-player-form">
-                            <h5>Identify Player (for URL Path):</h5>
-                            <div>
-                                <label for="updatePlayer_TeamID_URL">Team ID:</label>
-                                <input type="text" id="updatePlayer_TeamID_URL" placeholder="e.g., ARS">
-                            </div>
-                             <div>
-                                <label for="updatePlayer_Number_URL">Jersey Number:</label> <input type="number" id="updatePlayer_Number_URL" placeholder="e.g., 7"> </div>
+        <div class="container my-4 p-3 shadow rounded">
+            <h2>Add New Player (/epl/players PUT) & Update Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; POST)</h2>
+            <p>Enter player details to add a new player or update an existing one using Team ID and Jersey Number.</p>
 
-                            <h5>Update Fields (Optional - only fill what you want to change, sent in Body):</h5>
-                            <div>
-                                <label for="updatePlayer_PlayerName_Body">Player Name:</label>
-                                <input type="text" id="updatePlayer_PlayerName_Body" placeholder="e.g., New Player Name">
-                            </div>
-                             <div>
-                                <label for="updatePlayer_Position_Body">Position:</label>
-                                <input type="text" id="updatePlayer_Position_Body" placeholder="e.g., FW">
-                            </div>
-                             <div>
-                                <label for="updatePlayer_Age_Body">Age:</label>
-                                <input type="number" id="updatePlayer_Age_Body" placeholder="e.g., 24">
-                            </div>
-                            <div>
-                                <label for="updatePlayer_Number_Body">Jersey Number:</label> <input type="number" id="updatePlayer_Number_Body" placeholder="e.g., 9">
-                            </div>
+            <div class="row g-3"> <div class="col-md-4">
+                    <label for="player_TeamID" class="form-label">Team ID:</label>
+                    <input type="text" class="form-control" id="player_TeamID" placeholder="e.g., ARS">
+                </div>
+                <div class="col-md-4">
+                    <label for="player_Name" class="form-label">Player Name:</label>
+                    <input type="text" class="form-control" id="player_Name" placeholder="e.g., Bukayo Saka">
+                </div>
+                <div class="col-md-4">
+                    <label for="player_Position" class="form-label">Position:</label>
+                    <select class="form-select" id="player_Position">
+                        <option value="">-- Select Position --</option>
+                        <option value="Goalkeeper">Goalkeeper</option>
+                        <option value="Defender">Defender</option>
+                        <option value="Midfielder">Midfielder</option>
+                        <option value="Forward">Forward</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="player_Age" class="form-label">Age:</label>
+                    <input type="number" class="form-control" id="player_Age" placeholder="e.g., 22">
+                </div>
+                <div class="col-md-4">
+                    <label for="player_Number" class="form-label">Jersey Number:</label>
+                    <input type="number" class="form-control" id="player_Number" placeholder="e.g., 7">
+                </div>
+                <div class="col-md-12 mt-3"> <button onclick="addPlayerEPL()" class="btn btn-primary me-2">Add Player</button>
+                     <button onclick="updatePlayerEPL()" class="btn btn-secondary">Update Player</button>
+                </div>
+            </div>
 
+            <div id="addPlayerStatusEPL" class="mt-3"></div>
+            <div id="updatePlayerStatusEPL" class="mt-3"></div>
+        </div>
 
-                            <button onclick="updatePlayerEPL()">Update Player</button>
-                        </div>
-                        <div id="updatePlayerStatusEPL" class="mt-3"></div>
-                    </div>
+        <div class="container my-4 p-3 shadow rounded">
+            <h2>Delete Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; DELETE)</h2>
+            <p>Enter the player's Team ID and Jersey Number to permanently delete them.</p>
 
-                    <div class="container">
-                        <h4>Delete Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; DELETE)</h4>
-                        <p>Enter the player's Team ID and Jersey Number to permanently delete them.</p>
-                        <div class="delete-player-form">
-                            <div>
-                                <label for="deletePlayer_TeamID">Team ID:</label>
-                                <input type="text" id="deletePlayer_TeamID" placeholder="e.g., ARS">
-                            </div>
-                             <div>
-                                <label for="deletePlayer_Number">Jersey Number:</label>
-                                <input type="number" id="deletePlayer_Number" placeholder="e.g., 7">
-                            </div>
+            <div class="row g-3"> <div class="col-md-4">
+                    <label for="deletePlayer_TeamID" class="form-label">Team ID:</label>
+                    <input type="text" class="form-control" id="deletePlayer_TeamID" placeholder="e.g., ARS">
+                </div>
+                 <div class="col-md-4">
+                    <label for="deletePlayer_Number" class="form-label">Jersey Number:</label>
+                    <input type="number" class="form-control" id="deletePlayer_Number" placeholder="e.g., 7">
+                </div>
+                 <div class="col-md-12 mt-3"> <button onclick="deletePlayerEPL()" class="btn btn-danger">Delete Player</button>
+                </div>
+            </div>
 
-                            <button onclick="deletePlayerEPL()">Delete Player</button>
-                        </div>
-                        <div id="deletePlayerStatusEPL" class="mt-3"></div>
-                    </div>
+            <div id="deletePlayerStatusEPL" class="mt-3"></div>
+        </div>
                  </div> 
             <div class="container my-4 p-3 shadow rounded">
         <h2>API Response</h2>
