@@ -1,7 +1,7 @@
 // script.js
 
 // API Base URL - You can change this or add an input field for it later
-let apiBaseUrl = 'http://aws-chek-free-tier-bucket.s3-website.eu-north-1.amazonaws.com/';
+let apiBaseUrl = 'http://ec2-13-60-86-85.eu-north-1.compute.amazonaws.com:5000'; // This should be the URL of your running Flask API on EC2
 
 // Variable to store the JWT token (will be null initially)
 let jwtToken = null;
@@ -35,17 +35,8 @@ document.addEventListener('DOMContentLoaded', function() {
     hideProtectedContent();
     // Clear response area and set initial message
     responseDiv.textContent = 'Please log in to use the API.';
-
-    // Note: Login section is visible by default in HTML (it doesn't have d-none initially)
-    // hideProtectedContent() will hide the protected wrapper and ensure login is visible.
 });
-// --- End of code to run when the page loads ---
 
-// script.js
-
-// ... (your existing variable declarations and show/hide functions) ...
-
-// Get references to login form elements
 const loginUsernameInput = document.getElementById('loginUsername');
 const loginPasswordInput = document.getElementById('loginPassword');
 const loginStatusP = document.getElementById('loginStatus'); // Already defined, but ensuring context
