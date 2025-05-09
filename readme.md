@@ -9,9 +9,6 @@ The UI serves as a training interface to demonstrate making API calls (GET, POST
 * **User Authentication:** Login to obtain a JSON Web Token (JWT).
 * **List Teams:** Retrieve and display a list of all EPL teams.
 * **Get Team Details & Players:** Fetch detailed information for a specific team, including its roster, with options to filter players by position, age range, and jersey number, and sort the player list.
-* **Add New Player:** Add a new player by providing their details and the team they belong to.
-* **Update Player:** Modify the details of an existing player using their team ID and jersey number.
-* **Delete Player:** Remove a player from the database using their team ID and jersey number.
 * **Search Teams or Players:** Search for teams or players based on various attributes (Team Name, Player Name, Position, Team ID, Stadium, Manager, Age, Number) using a generic search endpoint.
 
 ## Setup
@@ -34,7 +31,7 @@ This UI is a collection of static files and does not require a backend server to
 ## Usage
 
 1.  Access the hosted `index.html` file through your web server's URL.
-2.  In the **User Authentication** section, enter the login credentials for your API (e.g., username: `vladi`, password: `Aa111111`).
+2.  In the **User Authentication** section, enter the login credentials for your API (e.g., username: `...`, password: `...`).
 3.  Click the "Login" button. If successful, a JWT token will be displayed, and the other API interaction sections should become available.
 4.  Use the different sections of the UI to interact with the API endpoints (List Teams, Get Team Details, Add/Update/Delete Player, Search). Follow the instructions and placeholder text within each section.
 
