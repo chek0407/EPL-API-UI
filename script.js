@@ -308,6 +308,7 @@ async function getAllTeamsEPL() {
     const teams = await callApi('/epl/teams', 'GET');
 
     const eplTeamTableBody = document.getElementById('eplTeamTableBody');
+    const eplTeamListResultsDiv = document.getElementById('eplTeamListResults');
     eplTeamTableBody.innerHTML = ''; // Clear previous results
 
     if (teams && Array.isArray(teams)) {
@@ -322,12 +323,16 @@ async function getAllTeamsEPL() {
                 row.insertCell(4).textContent = team.Manager || '';
                 // Add more cells if you display other properties
             });
+
+            eplTeamListResultsDiv.classList.remove('hidden');
+
         } else {
             const row = eplTeamTableBody.insertRow();
             const cell = row.insertCell(0);
             cell.colSpan = 5; // Adjust colspan based on number of columns above
             cell.textContent = 'No EPL teams found.';
             cell.style.textAlign = 'center';
+            eplTeamListResultsDiv.classList.remove('hidden');
         }
     } else if (teams && teams.message) {
          // Handle API messages like 'No users found' (if applicable to this endpoint)
@@ -336,6 +341,7 @@ async function getAllTeamsEPL() {
          cell.colSpan = 5; // Adjust colspan
          cell.textContent = teams.message;
          cell.style.textAlign = 'center';
+         eplTeamListResultsDiv.classList.remove('hidden');
     }
      else {
         // Handle the case where callApi returns null (fetch error, network issue, API error)
