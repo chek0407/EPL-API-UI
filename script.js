@@ -1,4 +1,4 @@
-let apiBaseUrl = 'http://ec2-13-60-86-85.eu-north-1.compute.amazonaws.com:5000'; // Default URL, change as needed or use the input box
+let apiBaseUrl = 'https://epl-api-ui.onrender.com'; // Default URL, change as needed or use the input box
 let jwtToken = null;
 
 const responseDiv = document.getElementById('response').querySelector('pre');
