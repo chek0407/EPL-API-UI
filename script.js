@@ -1,4 +1,4 @@
-let apiBaseUrl = 'https://epl-api-ui.onrender.com'; // Default URL, change as needed or use the input box
+let apiBaseUrl = 'https://epl-flask-api.onrender.com'; // Default URL, change as needed or use the input box
 let jwtToken = null;
 
 const responseDiv = document.getElementById('response').querySelector('pre');
