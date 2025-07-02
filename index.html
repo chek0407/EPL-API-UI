@@ -1,208 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>API Training UI</title>
-        <style>
-            /* Add these CSS rules or replace your existing ones */
-            body {
-                font-family: 'Arial', sans-serif; /* Use a common font */
-                line-height: 1.6;
-                margin: 0; /* Remove default body margin */
-                padding: 20px; /* Add padding around content */
-                background-color: #f4f4f4; /* Light gray background */
-                color: #333; /* Dark gray text */
-            }
-    
-            h1, h2, h3, h4 {
-                color: #0056b3; /* A shade of blue for headings */
-                margin-top: 20px;
-                margin-bottom: 10px;
-            }
-    
-            .container {
-                background-color: #fff; /* White background for containers */
-                margin-bottom: 25px; /* Space between sections */
-                padding: 20px; /* Padding inside containers */
-                border-radius: 8px; /* Rounded corners */
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow */
-                border: 1px solid #ddd; /* Light gray border */
-            }
-    
-            /* Style for inputs and buttons */
-            input[type="text"],
-            input[type="password"],
-            button {
-                padding: 10px 15px; /* More padding */
-                margin-right: 10px;
-                border: 1px solid #ccc;
-                border-radius: 5px; /* Rounded input/button corners */
-                font-size: 1em;
-                vertical-align: middle; /* Align them nicely */
-            }
-    
-            button {
-                background-color: #007bff; /* Primary blue button */
-                color: white; /* White text on button */
-                border: none;
-                cursor: pointer;
-                transition: background-color 0.3s ease; /* Smooth hover effect */
-            }
-    
-            button:hover {
-                background-color: #0056b3; /* Darker blue on hover */
-            }
-    
-            button:active {
-                background-color: #004085; /* Even darker when clicked */
-            }
-    
-            /* Style for tables */
-            table {
-                border-collapse: collapse; /* Remove space between borders */
-                width: 100%;
-                margin-top: 15px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Subtle shadow for table */
-            }
-    
-            th, td {
-                border: 1px solid #ddd; /* Light border */
-                padding: 12px; /* More padding */
-                text-align: left;
-            }
-    
-            th {
-                background-color: #e9ecef; /* Light background for headers */
-                font-weight: bold;
-                color: #495057;
-            }
-    
-            tbody tr:nth-child(even) {
-                background-color: #f8f9fa; /* Zebra striping */
-            }
-    
-            /* Style for the raw response block */
-            #response pre {
-                background-color: #e9e9eb; /* Light gray background */
-                padding: 15px;
-                border-radius: 5px;
-                overflow-x: auto; /* Scroll if content is too wide */
-                border: 1px solid #ccc;
-                max-height: 300px; /* Limit height */
-                white-space: pre-wrap; /* Wrap long lines */
-                word-wrap: break-word;
-            }
-    
-            .hidden {
-                display: none; /* Keep the hidden class */
-            }
-    
-            /* Add some spacing for status messages */
-            #loginStatus, #addUserStatus, #updateUserStatus, #deleteUserStatus, #eplTeamDetailsStatus {
-                margin-top: 10px;
-                font-weight: bold;
-            }
-    
-            #loginStatus[style*="green"], #addUserStatus[style*="green"], #updateUserStatus[style*="green"], #deleteUserStatus[style*="green"] {
-                color: green;
-            }
-             #loginStatus[style*="red"], #addUserStatus[style*="red"], #updateUserStatus[style*="red"], #deleteUserStatus[style*="red"], #eplTeamDetailsStatus[style*="red"] {
-                color: red;
-            }
-    
-    /* Refined CSS for Layout and Spacing (including consistent form control sizing) */
 
-/* ... (Keep your existing .row, .col-md-*, .mb-3, .g-3, .d-flex, .align-items-end, .me-2 styles here) ... */
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Training UI</title>
+    <style>
+        /* Add these CSS rules or replace your existing ones */
+        body {
+            font-family: 'Arial', sans-serif;
+            /* Use a common font */
+            line-height: 1.6;
+            margin: 0;
+            /* Remove default body margin */
+            padding: 20px;
+            /* Add padding around content */
+            background-color: #f4f4f4;
+            /* Light gray background */
+            color: #333;
+            /* Dark gray text */
+        }
 
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #0056b3;
+            /* A shade of blue for headings */
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
 
-/* --- Refinements for Form Elements within Columns --- */
+        .container {
+            background-color: #fff;
+            /* White background for containers */
+            margin-bottom: 25px;
+            /* Space between sections */
+            padding: 20px;
+            /* Padding inside containers */
+            border-radius: 8px;
+            /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow */
+            border: 1px solid #ddd;
+            /* Light gray border */
+        }
 
-/* Ensure form labels have space below them */
-.form-label {
-    display: block;
-    margin-bottom: 0.25rem;
-    font-weight: bold;
-}
+        /* Style for inputs and buttons */
+        input[type="text"],
+        input[type="password"],
+        button {
+            padding: 10px 15px;
+            /* More padding */
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            /* Rounded input/button corners */
+            font-size: 1em;
+            vertical-align: middle;
+            /* Align them nicely */
+        }
 
-/* Ensure form controls (input, select) fill their column width */
-/* ADDED/MODIFIED: Set a consistent padding and potentially height */
-.form-control, .form-select,
-input[type="text"],
-input[type="number"], /* Target number inputs specifically */
-input[type="password"] /* Target password inputs specifically */
-{
-    display: block;
-    width: 100%;
-    box-sizing: border-box; /* Essential for consistent sizing */
+        button {
+            background-color: #007bff;
+            /* Primary blue button */
+            color: white;
+            /* White text on button */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            /* Smooth hover effect */
+        }
 
-    /* Consistent Padding - adjust these values if needed to match your desired height */
-    padding: 0.375rem 0.75rem; /* This is often the padding used by frameworks for a standard height */
+        button:hover {
+            background-color: #0056b3;
+            /* Darker blue on hover */
+        }
 
-    /* Optional: Set a fixed height if padding alone isn't sufficient */
-    /* You might need to experiment with this value */
-    /* height: 38px; */ /* Example: A common height value */
+        button:active {
+            background-color: #004085;
+            /* Even darker when clicked */
+        }
 
-    font-size: 1rem;
-    line-height: 1.5; /* Helps with vertical alignment of text inside the control */
-    color: #495057;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        /* Style for tables */
+        table {
+            border-collapse: collapse;
+            /* Remove space between borders */
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            /* Subtle shadow for table */
+        }
 
-    /* Ensure consistent vertical alignment within flex containers */
-    align-self: flex-start; /* Align items to the start of the cross axis (top) */
-    /* Or use 'center' if you want them vertically centered */
-    /* align-self: center; */
+        th,
+        td {
+            border: 1px solid #ddd;
+            /* Light border */
+            padding: 12px;
+            /* More padding */
+            text-align: left;
+        }
 
-    margin-bottom: 0.5rem; /* Add a little space below controls if they are in their own column */
-}
+        th {
+            background-color: #e9ecef;
+            /* Light background for headers */
+            font-weight: bold;
+            color: #495057;
+        }
 
-/* Specific adjustments for select dropdown arrow background */
-.form-select {
-     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-     background-repeat: no-repeat;
-     background-position: right 0.75rem center;
-     background-size: 16px 12px;
-     appearance: none;
-}
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+            /* Zebra striping */
+        }
+
+        /* Style for the raw response block */
+        #response pre {
+            background-color: #e9e9eb;
+            /* Light gray background */
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            /* Scroll if content is too wide */
+            border: 1px solid #ccc;
+            max-height: 300px;
+            /* Limit height */
+            white-space: pre-wrap;
+            /* Wrap long lines */
+            word-wrap: break-word;
+        }
+
+        .hidden {
+            display: none;
+            /* Keep the hidden class */
+        }
+
+        /* Add some spacing for status messages */
+        #loginStatus,
+        #addUserStatus,
+        #updateUserStatus,
+        #deleteUserStatus,
+        #eplTeamDetailsStatus {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        #loginStatus[style*="green"],
+        #addUserStatus[style*="green"],
+        #updateUserStatus[style*="green"],
+        #deleteUserStatus[style*="green"] {
+            color: green;
+        }
+
+        #loginStatus[style*="red"],
+        #addUserStatus[style*="red"],
+        #updateUserStatus[style*="red"],
+        #deleteUserStatus[style*="red"],
+        #eplTeamDetailsStatus[style*="red"] {
+            color: red;
+        }
+
+        /* Refined CSS for Layout and Spacing (including consistent form control sizing) */
+
+        /* ... (Keep your existing .row, .col-md-*, .mb-3, .g-3, .d-flex, .align-items-end, .me-2 styles here) ... */
 
 
-/* Adjust margin bottom for the last form control in a column before the next row */
-.row > div:last-child > .form-control:last-child,
-.row > div:last-child > .form-select:last-child,
-.row > div:last-child > input:last-child { /* Include input types here as well */
-     margin-bottom: 0;
-}
+        /* --- Refinements for Form Elements within Columns --- */
+
+        /* Ensure form labels have space below them */
+        .form-label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: bold;
+        }
+
+        /* Ensure form controls (input, select) fill their column width */
+        /* ADDED/MODIFIED: Set a consistent padding and potentially height */
+        .form-control,
+        .form-select,
+        input[type="text"],
+        input[type="number"],
+        /* Target number inputs specifically */
+        input[type="password"]
+
+        /* Target password inputs specifically */
+            {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            /* Essential for consistent sizing */
+
+            /* Consistent Padding - adjust these values if needed to match your desired height */
+            padding: 0.375rem 0.75rem;
+            /* This is often the padding used by frameworks for a standard height */
+
+            /* Optional: Set a fixed height if padding alone isn't sufficient */
+            /* You might need to experiment with this value */
+            /* height: 38px; */
+            /* Example: A common height value */
+
+            font-size: 1rem;
+            line-height: 1.5;
+            /* Helps with vertical alignment of text inside the control */
+            color: #495057;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+            /* Ensure consistent vertical alignment within flex containers */
+            align-self: flex-start;
+            /* Align items to the start of the cross axis (top) */
+            /* Or use 'center' if you want them vertically centered */
+            /* align-self: center; */
+
+            margin-bottom: 0.5rem;
+            /* Add a little space below controls if they are in their own column */
+        }
+
+        /* Specific adjustments for select dropdown arrow background */
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            appearance: none;
+        }
 
 
-/* Align buttons vertically better when next to inputs in a flex container */
-.d-flex.align-items-end > button,
-.d-flex.align-items-end > input, /* Include inputs here if they are direct flex items */
-.d-flex.align-items-end > select /* Include selects here if they are direct flex items */
-{
-    margin-bottom: 0 !important;
-    align-self: flex-end; /* Explicitly align buttons/inputs/selects to the end in this specific flex container */
-}
+        /* Adjust margin bottom for the last form control in a column before the next row */
+        .row>div:last-child>.form-control:last-child,
+        .row>div:last-child>.form-select:last-child,
+        .row>div:last-child>input:last-child {
+            /* Include input types here as well */
+            margin-bottom: 0;
+        }
 
-/* Basic style for buttons (ensure consistent padding with form controls) */
-.btn {
-    /* Keep existing button styles */
-     display: inline-block;
-     vertical-align: middle;
-     /* Ensure padding matches form controls for consistent height */
-     padding: 0.375rem 0.75rem;
-     box-sizing: border-box;
-     line-height: 1.5; /* Match line-height to form controls */
-}
 
-/* ... (Keep your existing button hover/active styles) ... */
+        /* Align buttons vertically better when next to inputs in a flex container */
+        .d-flex.align-items-end>button,
+        .d-flex.align-items-end>input,
+        /* Include inputs here if they are direct flex items */
+        .d-flex.align-items-end>select
 
-/* --- End of Refinements --- */
-        </style>
-    </head>
+        /* Include selects here if they are direct flex items */
+            {
+            margin-bottom: 0 !important;
+            align-self: flex-end;
+            /* Explicitly align buttons/inputs/selects to the end in this specific flex container */
+        }
+
+        /* Basic style for buttons (ensure consistent padding with form controls) */
+        .btn {
+            /* Keep existing button styles */
+            display: inline-block;
+            vertical-align: middle;
+            /* Ensure padding matches form controls for consistent height */
+            padding: 0.375rem 0.75rem;
+            box-sizing: border-box;
+            line-height: 1.5;
+            /* Match line-height to form controls */
+        }
+
+        /* ... (Keep your existing button hover/active styles) ... */
+
+        /* --- End of Refinements --- */
+    </style>
+</head>
+
 <body>
     <h1>EPL Teams & Players</h1>
 
@@ -226,141 +291,144 @@ input[type="password"] /* Target password inputs specifically */
     <div class="container protected-content hidden">
         <h2>Authenticated Endpoints</h2>
 
-          <div class="collapse" id="eplCollapseContent">
+        <div class="collapse" id="eplCollapseContent">
             <div class="epl-data-content">
                 <div class="container my-4 p-3 shadow rounded">
-               <h4>List All Teams</h4>
-               <button class="btn btn-primary" onclick="getAllTeamsEPL()">List EPL Teams</button>
-               <button class="btn btn-secondary" onclick="clearEPLTeamsList()">Clear List</button>
-               <div id="eplTeamListResults" class="hidden">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>...</thead>
-                    <tbody id="eplTeamTableBody"></tbody>
-                </table>
-            </div>
-       </div>
-
-       <div class="container my-4 p-3 shadow rounded">
-            <h4>Get Team Details & Players</h4>
-
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <label for="getEplTeamDetails_TeamId" class="form-label">Team ID:</label>
-                    <input type="text" class="form-control" id="getEplTeamDetails_TeamId" placeholder="e.g., ARS">
-                </div>
-                <div class="col-md-8 d-flex align-items-end">
-                     <button class="btn btn-primary me-2" onclick="getEplTeamDetails()">Get Details</button>
-                     <button class="btn btn-secondary" onclick="clearEPLTeamDetails()">Clear Details</button>
-                </div>
-            </div>
-
-            <h5>Filter Players (Optional)</h5>
-            <div class="row mb-3">
-                <div class="col-md-3">
-                    <label for="filterPosition" class="form-label">Position:</label>
-                    <input type="text" class="form-control" id="filterPosition" placeholder="e.g. GK">
-                </div>
-                <div class="col-md-3">
-                    <label for="filterMinAge" class="form-label">Min Age:</label>
-                    <input type="number" class="form-control" id="filterMinAge" placeholder="e.g., 20" min="0">
-                </div>
-                <div class="col-md-3">
-                    <label for="filterMaxAge" class="form-label">Max Age:</label>
-                    <input type="number" class="form-control" id="filterMaxAge" placeholder="e.g., 30" min="0">
-                </div>
-                 <div class="col-md-3">
-                    <label for="filterNumber" class="form-label">Jersey Number:</label>
-                    <input type="number" class="form-control" id="filterNumber" placeholder="e.g., 7" min="0">
-                </div>
-            </div>
-
-            <h5>Sort Players (Optional)</h5>
-            <div class="row mb-3">
-                 <div class="col-md-6">
-                    <label for="sortPlayersBy" class="form-label">Sort By:</label>
-                    <select class="form-select" id="sortPlayersBy">
-                        <option value="">-- Select Field --</option>
-                        <option value="PlayerName">Name</option>
-                        <option value="Position">Position</option>
-                        <option value="Number">Number</option>
-                        <option value="Age">Age</option>
-                        </select>
-                </div>
-                 <div class="col-md-6">
-                    <label for="sortPlayersOrder" class="form-label">Order:</label>
-                    <select class="form-select" id="sortPlayersOrder">
-                         <option value="asc">Ascending</option>
-                         <option value="desc">Descending</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="eplTeamDetailsResults">
-                <div id="teamDetailsArea">
-                    <h6>Team Details:</h6>
-                    <p>Select a team and click "Get Details" to see information here.</p>
+                    <h4>List All Teams</h4>
+                    <button class="btn btn-primary" onclick="getAllTeamsEPL()">List EPL Teams</button>
+                    <button class="btn btn-secondary" onclick="clearEPLTeamsList()">Clear List</button>
+                    <div id="eplTeamListResults" class="hidden">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>...</thead>
+                            <tbody id="eplTeamTableBody"></tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div id="teamPlayersArea" class="hidden">
-                    <h6>Players:</h6>
-                    <table class="table table-striped table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Number</th>
-                                <th>Age</th>
-                                </tr>
-                        </thead>
-                        <tbody id="eplTeamPlayersTableBody">
-                            </tbody>
-                    </table>
-                </div>
-                 <div id="eplTeamDetailsStatus"></div>
-           </div>
+                <div class="container my-4 p-3 shadow rounded">
+                    <h4>Get Team Details & Players</h4>
 
-           <div class="container my-4 p-3 shadow rounded">
-            <h4>Search Teams or Players </h4>
-                <!-- (/epl/search?key=&lt;attribute&gt;&value=&lt;value&gt; GET) -->
-            <p>Search for teams or players by a specific attribute. Uses a "contains" filter (case-sensitive).</p>
-            <div class="search-epl-form row g-3"> 
-                <div class="col-md-4">
-                    <label for="searchEPL_Key" class="form-label">Attribute (Key):</label>
-                    <select class="form-select" id="searchEPL_Key">
-                         <option value="">-- Select Attribute --</option>
-                        <option value="TeamName">Team Name</option>
-                        <option value="PlayerName">Player Name</option>
-                        <option value="Position">Position</option>
-                        <option value="TeamID">Team ID</option>
-                        <option value="Stadium">Stadium</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Age">Age (numeric)</option>
-                        <option value="Number">Jersey Number (numeric)</option>
-                        </select>
-                </div>
-                <div class="col-md-5">
-                    <label for="searchEPL_Value" class="form-label">Value:</label>
-                    <input type="text" class="form-control" id="searchEPL_Value" placeholder="Enter search term">
-                </div>
-                 <div class="col-md-3 d-flex align-items-end">
-                    <button class="btn btn-primary me-2" onclick="searchEPLEntities()">Search</button>
-                    <button class="btn btn-secondary" onclick="clearEPLEntitySearch()">Clear Search</button>
-                </div>
-            </div>
-            <div id="searchPlayerResultsEPL" class="hidden">
-                <table>
-                    <thead>...</thead>
-                    <tbody id="searchPlayerTableBodyEPL"></tbody>
-                </table>
-                <div id="searchPlayerStatusEPL"></div>
-            </div>
-        </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="getEplTeamDetails_TeamId" class="form-label">Team ID:</label>
+                            <input type="text" class="form-control" id="getEplTeamDetails_TeamId"
+                                placeholder="e.g., ARS">
+                        </div>
+                        <div class="col-md-8 d-flex align-items-end">
+                            <button class="btn btn-primary me-2" onclick="getEplTeamDetails()">Get Details</button>
+                            <button class="btn btn-secondary" onclick="clearEPLTeamDetails()">Clear Details</button>
+                        </div>
+                    </div>
+
+                    <h5>Filter Players (Optional)</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="filterPosition" class="form-label">Position:</label>
+                            <input type="text" class="form-control" id="filterPosition" placeholder="e.g. GK">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterMinAge" class="form-label">Min Age:</label>
+                            <input type="number" class="form-control" id="filterMinAge" placeholder="e.g., 20" min="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterMaxAge" class="form-label">Max Age:</label>
+                            <input type="number" class="form-control" id="filterMaxAge" placeholder="e.g., 30" min="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="filterNumber" class="form-label">Jersey Number:</label>
+                            <input type="number" class="form-control" id="filterNumber" placeholder="e.g., 7" min="0">
+                        </div>
+                    </div>
+
+                    <h5>Sort Players (Optional)</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="sortPlayersBy" class="form-label">Sort By:</label>
+                            <select class="form-select" id="sortPlayersBy">
+                                <option value="">-- Select Field --</option>
+                                <option value="PlayerName">Name</option>
+                                <option value="Position">Position</option>
+                                <option value="Number">Number</option>
+                                <option value="Age">Age</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sortPlayersOrder" class="form-label">Order:</label>
+                            <select class="form-select" id="sortPlayersOrder">
+                                <option value="asc">Ascending</option>
+                                <option value="desc">Descending</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="eplTeamDetailsResults">
+                        <div id="teamDetailsArea">
+                            <h6>Team Details:</h6>
+                            <p>Select a team and click "Get Details" to see information here.</p>
+                        </div>
+
+                        <div id="teamPlayersArea" class="hidden">
+                            <h6>Players:</h6>
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Number</th>
+                                        <th>Age</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eplTeamPlayersTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="eplTeamDetailsStatus"></div>
+                    </div>
+
+                    <div class="container my-4 p-3 shadow rounded">
+                        <h4>Search Teams or Players </h4>
+                        <!-- (/epl/search?key=&lt;attribute&gt;&value=&lt;value&gt; GET) -->
+                        <p>Search for teams or players by a specific attribute. Uses a "contains" filter
+                            (case-sensitive).</p>
+                        <div class="search-epl-form row g-3">
+                            <div class="col-md-4">
+                                <label for="searchEPL_Key" class="form-label">Attribute (Key):</label>
+                                <select class="form-select" id="searchEPL_Key">
+                                    <option value="">-- Select Attribute --</option>
+                                    <option value="TeamName">Team Name</option>
+                                    <option value="Players.PlayerName">Player Name</option>
+                                    <option value="Players.Position">Position</option>
+                                    <option value="TeamID">Team ID</option>
+                                    <option value="Stadium">Stadium</option>
+                                    <option value="Manager">Manager</option>
+                                    <option value="Players.Age">Age (numeric)</option>
+                                    <option value="Players.Number">Jersey Number (numeric)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="searchEPL_Value" class="form-label">Value:</label>
+                                <input type="text" class="form-control" id="searchEPL_Value"
+                                    placeholder="Enter search term">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button class="btn btn-primary me-2" onclick="searchEPLEntities()">Search</button>
+                                <button class="btn btn-secondary" onclick="clearEPLEntitySearch()">Clear Search</button>
+                            </div>
+                        </div>
+                        <div id="searchPlayerResultsEPL" class="hidden">
+                            <table>
+                                <thead>...</thead>
+                                <tbody id="searchPlayerTableBodyEPL"></tbody>
+                            </table>
+                            <div id="searchPlayerStatusEPL"></div>
+                        </div>
+                    </div>
 
 
-        <!-- <div class="container my-4 p-3 shadow rounded">
+                    <!-- <div class="container my-4 p-3 shadow rounded">
             <h3>Add New Player </h3> -->
-                <!-- (/epl/players PUT) & Update Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; POST) -->
-            <!-- <p>Enter player details to add a new player or update an existing one using Team ID and Jersey Number.</p>
+                    <!-- (/epl/players PUT) & Update Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; POST) -->
+                    <!-- <p>Enter player details to add a new player or update an existing one using Team ID and Jersey Number.</p>
 
             <div class="row g-3"> <div class="col-md-4">
                     <label for="player_TeamID" class="form-label">Team ID:</label>
@@ -393,7 +461,7 @@ input[type="password"] /* Target password inputs specifically */
                 </div>
             </div> -->
 
-            <!-- <div id="addPlayerStatusEPL" class="mt-3"></div>
+                    <!-- <div id="addPlayerStatusEPL" class="mt-3"></div>
             <div id="updatePlayerStatusEPL" class="mt-3"></div>
         </div>
 
@@ -416,9 +484,9 @@ input[type="password"] /* Target password inputs specifically */
 
             <div id="deletePlayerStatusEPL" class="mt-3"></div>
         </div> -->
-         <!-- Users MAnagement Endpoints -->
+                    <!-- Users MAnagement Endpoints -->
 
-        <!-- <div class="container">
+                    <!-- <div class="container">
             <h3>Get User by ID (/get_user/&lt;user_id&gt; GET)</h3>
             <input type="text" id="getUserId" placeholder="Enter User ID">
             <button onclick="getUserById()">Get User</button>
@@ -459,14 +527,15 @@ input[type="password"] /* Target password inputs specifically */
         </div>
     </div> -->
 
-    <div class="container">
-        <h2>API Response</h2>
-        <div id="response">
-            <pre>Awaiting API call...</pre>
-        </div>
-    </div>
+                    <div class="container">
+                        <h2>API Response</h2>
+                        <div id="response">
+                            <pre>Awaiting API call...</pre>
+                        </div>
+                    </div>
 
 
-    <script src="script.js"></script>
+                    <script src="script.js"></script>
 </body>
+
 </html>
