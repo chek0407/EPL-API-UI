@@ -44,6 +44,8 @@ function setApiUrl() {
         alert("API URL set to " + apiBaseUrl);
     } else {
         alert("Please enter a valid URL.");
+    }
+}
 
 
 // --- API Interaction Functions ---
@@ -696,8 +698,6 @@ async function searchEPLEntities() {
         console.error('Error during search:', error);
         searchPlayerStatusDiv.textContent = `An error occurred: ${error.message}`;
         searchPlayerStatusDiv.style.color = 'red';
-    }
-}
     }
 }
 function clearEPLEntitySearch() {
