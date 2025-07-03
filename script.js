@@ -592,8 +592,8 @@ async function addPlayerEPL() {
     }
 }
 async function searchEPLEntities() {
-    const searchPlayerTableBody = document.getElementById('searchPlayerTableBody');
-    const searchPlayerStatusDiv = document.getElementById('searchPlayerStatus');
+    const searchPlayerTableBody = document.getElementById('searchPlayerTableBodyEPL');
+    const searchPlayerStatusDiv = document.getElementById('searchPlayerStatusEPL');
     const searchEPLKeySelect = document.getElementById('searchEPL_Key'); // Ensure this ID matches your HTML
     const searchEPLValueInput = document.getElementById('searchEPL_Value'); // Ensure this ID matches your HTML
 
