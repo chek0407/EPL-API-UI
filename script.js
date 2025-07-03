@@ -44,8 +44,6 @@ function setApiUrl() {
         alert("API URL set to " + apiBaseUrl);
     } else {
         alert("Please enter a valid URL.");
-    }
-}
 
 
 // --- API Interaction Functions ---
@@ -592,78 +590,114 @@ async function addPlayerEPL() {
     }
 }
 async function searchEPLEntities() {
-    // ... (existing code for clearing, hiding, getting searchKey/searchValue, validation) ...
+    const searchPlayerTableBody = document.getElementById('searchPlayerTableBody');
+    const searchPlayerStatusDiv = document.getElementById('searchPlayerStatus');
+    const searchEPLKeySelect = document.getElementById('searchEPL_Key'); // Ensure this ID matches your HTML
+    const searchEPLValueInput = document.getElementById('searchEPL_Value'); // Ensure this ID matches your HTML
 
-    // --- Construct the API endpoint URL with key and value parameters ---
+    // Clear previous results and status
+    searchPlayerTableBody.innerHTML = '';
+    searchPlayerStatusDiv.textContent = '';
+    searchPlayerStatusDiv.style.color = '';
+
+    // --- Declare and get the search parameters here ---
+    const searchKey = searchEPLKeySelect.value;
+    const searchValue = searchEPLValueInput.value.trim();
+    // --- End of parameter declaration ---
+
+    // Basic validation
+    if (!searchKey) {
+        searchPlayerStatusDiv.textContent = 'Please select a search attribute.';
+        searchPlayerStatusDiv.style.color = 'red';
+        return;
+    }
+    if (!searchValue) {
+        searchPlayerStatusDiv.textContent = 'Please enter a search value.';
+        searchPlayerStatusDiv.style.color = 'red';
+        return;
+    }
+
+    // Construct the API endpoint URL with key and value parameters
     const endpoint = `/epl/search?key=${encodeURIComponent(searchKey)}&value=${encodeURIComponent(searchValue)}`;
-    // --- End of URL construction ---
 
-    const result = await callApi(endpoint, 'GET');
+    try {
+        const result = await callApi(endpoint, 'GET');
 
-    if (result && result.results && Array.isArray(result.results)) {
-        const items = result.results; // These are the found Team documents
+        if (result && result.results && Array.isArray(result.results)) {
+            const items = result.results; // These are the found Team documents
 
-        let playersDisplayedCount = 0; // To track how many matching players we display
+            let playersDisplayedCount = 0; // To track how many matching players we display
 
-        if (items.length > 0) {
-            items.forEach(item => {
-                // If the search was for a team attribute, display the team
-                if (searchKey === 'TeamName' || searchKey === 'TeamID' || searchKey === 'Manager' || searchKey === 'Stadium') {
-                    const row = searchPlayerTableBody.insertRow();
-                    row.insertCell(0).textContent = item.TeamID || '';
-                    row.insertCell(1).textContent = item.EntityType || ''; // Will be 'TEAM'
-                    row.insertCell(2).textContent = `Team: ${item.TeamName || 'N/A'}, Manager: ${item.Manager || 'N/A'}, Stadium: ${item.Stadium || 'N/A'}`;
-                    playersDisplayedCount++; // Increment if a team is shown
-                } else if (searchKey.startsWith('Players.')) {
-                    // If the search was for a player attribute, iterate through players and filter
-                    const playerAttributeKey = searchKey.split('.')[1]; // e.g., 'PlayerName', 'Age'
+            if (items.length > 0) {
+                items.forEach(item => {
+                    // If the search was for a team attribute, display the team
+                    if (searchKey === 'TeamName' || searchKey === 'TeamID' || searchKey === 'Manager' || searchKey === 'Stadium') {
+                        const row = searchPlayerTableBody.insertRow();
+                        row.insertCell(0).textContent = item.TeamID || '';
+                        row.insertCell(1).textContent = item.EntityType || ''; // Will be 'TEAM'
+                        row.insertCell(2).textContent = `Team: ${item.TeamName || 'N/A'}, Manager: ${item.Manager || 'N/A'}, Stadium: ${item.Stadium || 'N/A'}`;
+                        playersDisplayedCount++; // Increment if a team is shown
+                    } else if (searchKey.startsWith('Players.')) {
+                        // If the search was for a player attribute, iterate through players and filter
+                        const playerAttributeKey = searchKey.split('.')[1]; // e.g., 'PlayerName', 'Age'
 
-                    item.Players.forEach(player => {
-                        let playerMatches = false;
+                        // Ensure item.Players is an array before iterating
+                        if (Array.isArray(item.Players)) {
+                            item.Players.forEach(player => {
+                                let playerMatches = false;
 
-                        // Check if the player matches the search criteria
-                        if (playerAttributeKey === 'Age' || playerAttributeKey === 'Number') {
-                            // For numeric attributes, compare as numbers
-                            if (parseInt(searchValue) === player[playerAttributeKey]) {
-                                playerMatches = true;
-                            }
-                        } else {
-                            // For string attributes, use case-insensitive comparison
-                            if (player[playerAttributeKey] && player[playerAttributeKey].toLowerCase().includes(searchValue.toLowerCase())) {
-                                playerMatches = true;
-                            }
+                                // Check if the player matches the search criteria
+                                if (playerAttributeKey === 'Age' || playerAttributeKey === 'Number') {
+                                    // For numeric attributes, compare as numbers
+                                    // Use parseFloat for robustness, then compare with ===
+                                    if (!isNaN(parseFloat(searchValue)) && parseFloat(searchValue) === player[playerAttributeKey]) {
+                                        playerMatches = true;
+                                    }
+                                } else {
+                                    // For string attributes, use case-insensitive comparison
+                                    if (player[playerAttributeKey] && typeof player[playerAttributeKey] === 'string' && player[playerAttributeKey].toLowerCase().includes(searchValue.toLowerCase())) {
+                                        playerMatches = true;
+                                    }
+                                }
+
+                                if (playerMatches) {
+                                    const row = searchPlayerTableBody.insertRow();
+                                    row.insertCell(0).textContent = item.TeamID || ''; // Still show which team they belong to
+                                    row.insertCell(1).textContent = `PLAYER#${player.PlayerID}`; // Indicate it's a player result
+                                    row.insertCell(2).textContent = `Player: ${player.PlayerName || 'N/A'}, Position: ${player.Position || 'N/A'}, Number: ${player.Number || 'N/A'}, Age: ${player.Age || 'N/A'}`;
+                                    playersDisplayedCount++;
+                                }
+                            });
                         }
+                    }
+                });
 
-                        if (playerMatches) {
-                            const row = searchPlayerTableBody.insertRow();
-                            row.insertCell(0).textContent = item.TeamID || ''; // Still show which team they belong to
-                            row.insertCell(1).textContent = `PLAYER#${player.PlayerID}`; // Indicate it's a player result
-                            row.insertCell(2).textContent = `Player: ${player.PlayerName || 'N/A'}, Position: ${player.Position || 'N/A'}, Number: ${player.Number || 'N/A'}, Age: ${player.Age || 'N/A'}`;
-                            playersDisplayedCount++;
-                        }
-                    });
+                if (playersDisplayedCount > 0) {
+                    searchPlayerStatusDiv.textContent = `Found ${playersDisplayedCount} matching item(s) for "${searchValue}" in "${searchKey}".`;
+                    searchPlayerStatusDiv.style.color = 'green';
+                } else {
+                    searchPlayerStatusDiv.textContent = `No players found matching "${searchValue}" in "${searchKey}".`;
+                    searchPlayerStatusDiv.style.color = 'orange';
                 }
-            });
 
-            if (playersDisplayedCount > 0) {
-                searchPlayerStatusDiv.textContent = `Found ${playersDisplayedCount} matching item(s) for "${searchValue}" in "${searchKey}".`;
-                searchPlayerStatusDiv.style.color = 'green';
             } else {
-                searchPlayerStatusDiv.textContent = `No players found matching "${searchValue}" in "${searchKey}".`;
+                // API returned an empty array in results.results
+                searchPlayerStatusDiv.textContent = `No teams or players found matching "${searchValue}" in "${searchKey}".`;
                 searchPlayerStatusDiv.style.color = 'orange';
             }
-
+        } else if (result && (result.error || result.message)) {
+            searchPlayerStatusDiv.textContent = result.error || result.message;
+            searchPlayerStatusDiv.style.color = 'red';
         } else {
-            // API returned an empty array in results.results
-            searchPlayerStatusDiv.textContent = `No teams or players found matching "${searchValue}" in "${searchKey}".`;
-            searchPlayerStatusDiv.style.color = 'orange';
+            searchPlayerStatusDiv.textContent = 'Failed to perform search. Unknown response format.';
+            searchPlayerStatusDiv.style.color = 'red';
         }
-    } else if (result && (result.error || result.message)) {
-        searchPlayerStatusDiv.textContent = result.error || result.message;
+    } catch (error) {
+        console.error('Error during search:', error);
+        searchPlayerStatusDiv.textContent = `An error occurred: ${error.message}`;
         searchPlayerStatusDiv.style.color = 'red';
-    } else {
-        searchPlayerStatusDiv.textContent = 'Failed to perform search.';
-        searchPlayerStatusDiv.style.color = 'red';
+    }
+}
     }
 }
 function clearEPLEntitySearch() {
