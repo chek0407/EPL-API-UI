@@ -4,538 +4,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Training UI</title>
+    <title>EPL API UI</title>
     <style>
-        /* Add these CSS rules or replace your existing ones */
         body {
-            font-family: 'Arial', sans-serif;
-            /* Use a common font */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
             margin: 0;
-            /* Remove default body margin */
             padding: 20px;
-            /* Add padding around content */
-            background-color: #f4f4f4;
-            /* Light gray background */
-            color: #333;
-            /* Dark gray text */
+            background-color: #f8f9fa;
+            color: #212529;
         }
 
-        h1,
-        h2,
-        h3,
-        h4 {
+        h1, h2, h3, h4 {
             color: #0056b3;
-            /* A shade of blue for headings */
             margin-top: 20px;
             margin-bottom: 10px;
         }
 
         .container {
             background-color: #fff;
-            /* White background for containers */
             margin-bottom: 25px;
-            /* Space between sections */
-            padding: 20px;
-            /* Padding inside containers */
+            padding: 25px;
             border-radius: 8px;
-            /* Rounded corners */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            /* Subtle shadow */
-            border: 1px solid #ddd;
-            /* Light gray border */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #dee2e6;
         }
 
-        /* Style for inputs and buttons */
         input[type="text"],
         input[type="password"],
+        input[type="number"],
+        select,
         button {
             padding: 10px 15px;
-            /* More padding */
             margin-right: 10px;
-            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            border: 1px solid #ced4da;
             border-radius: 5px;
-            /* Rounded input/button corners */
             font-size: 1em;
             vertical-align: middle;
-            /* Align them nicely */
+            box-sizing: border-box;
+        }
+        
+        input, select {
+             width: calc(100% - 22px); /* Adjust width for padding and border */
         }
 
         button {
             background-color: #007bff;
-            /* Primary blue button */
             color: white;
-            /* White text on button */
             border: none;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            /* Smooth hover effect */
+            width: auto;
         }
 
         button:hover {
             background-color: #0056b3;
-            /* Darker blue on hover */
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
         }
 
-        button:active {
-            background-color: #004085;
-            /* Even darker when clicked */
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
         }
 
-        /* Style for tables */
         table {
             border-collapse: collapse;
-            /* Remove space between borders */
             width: 100%;
             margin-top: 15px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            /* Subtle shadow for table */
         }
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            /* Light border */
+        th, td {
+            border: 1px solid #dee2e6;
             padding: 12px;
-            /* More padding */
             text-align: left;
         }
 
         th {
             background-color: #e9ecef;
-            /* Light background for headers */
-            font-weight: bold;
+            font-weight: 600;
             color: #495057;
         }
 
         tbody tr:nth-child(even) {
             background-color: #f8f9fa;
-            /* Zebra striping */
         }
 
-        /* Style for the raw response block */
         #response pre {
-            background-color: #e9e9eb;
-            /* Light gray background */
+            background-color: #212529;
+            color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
             overflow-x: auto;
-            /* Scroll if content is too wide */
-            border: 1px solid #ccc;
-            max-height: 300px;
-            /* Limit height */
+            max-height: 400px;
             white-space: pre-wrap;
-            /* Wrap long lines */
             word-wrap: break-word;
         }
 
         .hidden {
             display: none;
-            /* Keep the hidden class */
         }
 
-        /* Add some spacing for status messages */
-        #loginStatus,
-        #addUserStatus,
-        #updateUserStatus,
-        #deleteUserStatus,
-        #eplTeamDetailsStatus {
+        .status-message {
             margin-top: 10px;
             font-weight: bold;
+            padding: 10px;
+            border-radius: 5px;
         }
+        .status-success { color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb;}
+        .status-error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        .status-info { color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb;}
 
-        #loginStatus[style*="green"],
-        #addUserStatus[style*="green"],
-        #updateUserStatus[style*="green"],
-        #deleteUserStatus[style*="green"] {
-            color: green;
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            align-items: end;
         }
-
-        #loginStatus[style*="red"],
-        #addUserStatus[style*="red"],
-        #updateUserStatus[style*="red"],
-        #deleteUserStatus[style*="red"],
-        #eplTeamDetailsStatus[style*="red"] {
-            color: red;
+        .form-grid .full-width {
+            grid-column: 1 / -1;
         }
-
-        /* Refined CSS for Layout and Spacing (including consistent form control sizing) */
-
-        /* ... (Keep your existing .row, .col-md-*, .mb-3, .g-3, .d-flex, .align-items-end, .me-2 styles here) ... */
-
-
-        /* --- Refinements for Form Elements within Columns --- */
-
-        /* Ensure form labels have space below them */
-        .form-label {
+        .form-grid label {
             display: block;
-            margin-bottom: 0.25rem;
-            font-weight: bold;
+            margin-bottom: 5px;
+            font-weight: 500;
         }
 
-        /* Ensure form controls (input, select) fill their column width */
-        /* ADDED/MODIFIED: Set a consistent padding and potentially height */
-        .form-control,
-        .form-select,
-        input[type="text"],
-        input[type="number"],
-        /* Target number inputs specifically */
-        input[type="password"]
-
-        /* Target password inputs specifically */
-            {
-            display: block;
-            width: 100%;
-            box-sizing: border-box;
-            /* Essential for consistent sizing */
-
-            /* Consistent Padding - adjust these values if needed to match your desired height */
-            padding: 0.375rem 0.75rem;
-            /* This is often the padding used by frameworks for a standard height */
-
-            /* Optional: Set a fixed height if padding alone isn't sufficient */
-            /* You might need to experiment with this value */
-            /* height: 38px; */
-            /* Example: A common height value */
-
-            font-size: 1rem;
-            line-height: 1.5;
-            /* Helps with vertical alignment of text inside the control */
-            color: #495057;
-            background-color: #fff;
-            background-clip: padding-box;
-            border: 1px solid #ced4da;
-            border-radius: 0.25rem;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-
-            /* Ensure consistent vertical alignment within flex containers */
-            align-self: flex-start;
-            /* Align items to the start of the cross axis (top) */
-            /* Or use 'center' if you want them vertically centered */
-            /* align-self: center; */
-
-            margin-bottom: 0.5rem;
-            /* Add a little space below controls if they are in their own column */
-        }
-
-        /* Specific adjustments for select dropdown arrow background */
-        .form-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 16px 12px;
-            appearance: none;
-        }
-
-
-        /* Adjust margin bottom for the last form control in a column before the next row */
-        .row>div:last-child>.form-control:last-child,
-        .row>div:last-child>.form-select:last-child,
-        .row>div:last-child>input:last-child {
-            /* Include input types here as well */
-            margin-bottom: 0;
-        }
-
-
-        /* Align buttons vertically better when next to inputs in a flex container */
-        .d-flex.align-items-end>button,
-        .d-flex.align-items-end>input,
-        /* Include inputs here if they are direct flex items */
-        .d-flex.align-items-end>select
-
-        /* Include selects here if they are direct flex items */
-            {
-            margin-bottom: 0 !important;
-            align-self: flex-end;
-            /* Explicitly align buttons/inputs/selects to the end in this specific flex container */
-        }
-
-        /* Basic style for buttons (ensure consistent padding with form controls) */
-        .btn {
-            /* Keep existing button styles */
-            display: inline-block;
-            vertical-align: middle;
-            /* Ensure padding matches form controls for consistent height */
-            padding: 0.375rem 0.75rem;
-            box-sizing: border-box;
-            line-height: 1.5;
-            /* Match line-height to form controls */
-        }
-
-        /* ... (Keep your existing button hover/active styles) ... */
-
-        /* --- End of Refinements --- */
     </style>
 </head>
 
 <body>
-    <h1>EPL Teams & Players</h1>
-
-    <!-- <div class="container">
-        <h2>API Base URL</h2>
-        <label for="apiBaseUrl">Set API Endpoint:</label>
-        <input type="text" id="apiBaseUrl" value="http://ec2-13-60-86-85.eu-north-1.compute.amazonaws.com:5000" size="50">
-        <button onclick="setApiUrl()">Set URL</button>
-        <p><small>Remember to include http:// or https://</small></p>
-    </div> -->
-
+    <h1>EPL API UI</h1>
 
     <div class="container">
         <h2>Login</h2>
-        <input type="text" id="loginUsername" placeholder="Username" value="vladi">
-        <input type="password" id="loginPassword" placeholder="Password" value="Aa111111">
-        <button onclick="loginUser()">Login</button>
-        <p id="loginStatus"></p>
+        <div class="form-grid">
+            <div>
+                <input type="text" id="loginUsername" placeholder="Username" value="vladi">
+            </div>
+            <div>
+                <input type="password" id="loginPassword" placeholder="Password" value="Aa111111">
+            </div>
+            <div>
+                <button onclick="loginUser()">Login</button>
+            </div>
+        </div>
+        <div id="loginStatus" class="status-message hidden"></div>
     </div>
 
-    <div class="container protected-content hidden">
-        <h2>Authenticated Endpoints</h2>
+    <div class="protected-content hidden">
+        
+        <!-- EPL Operations -->
+        <div class="container">
+            <h2>EPL Operations</h2>
 
-        <div class="collapse" id="eplCollapseContent">
-            <div class="epl-data-content">
-                <div class="container my-4 p-3 shadow rounded">
-                    <h4>List All Teams</h4>
-                    <button class="btn btn-primary" onclick="getAllTeamsEPL()">List EPL Teams</button>
-                    <button class="btn btn-secondary" onclick="clearEPLTeamsList()">Clear List</button>
-                    <div id="eplTeamListResults" class="hidden">
-                        <table class="table table-striped table-bordered table-hover">
-                            <thead>...</thead>
-                            <tbody id="eplTeamTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="container my-4 p-3 shadow rounded">
-                    <h4>Get Team Details & Players</h4>
-
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="getEplTeamDetails_TeamId" class="form-label">Team ID:</label>
-                            <input type="text" class="form-control" id="getEplTeamDetails_TeamId"
-                                placeholder="e.g., ARS">
-                        </div>
-                        <div class="col-md-8 d-flex align-items-end">
-                            <button class="btn btn-primary me-2" onclick="getEplTeamDetails()">Get Details</button>
-                            <button class="btn btn-secondary" onclick="clearEPLTeamDetails()">Clear Details</button>
-                        </div>
-                    </div>
-
-                    <h5>Filter Players (Optional)</h5>
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label for="filterPosition" class="form-label">Position:</label>
-                            <input type="text" class="form-control" id="filterPosition" placeholder="e.g. GK">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="filterMinAge" class="form-label">Min Age:</label>
-                            <input type="number" class="form-control" id="filterMinAge" placeholder="e.g., 20" min="0">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="filterMaxAge" class="form-label">Max Age:</label>
-                            <input type="number" class="form-control" id="filterMaxAge" placeholder="e.g., 30" min="0">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="filterNumber" class="form-label">Jersey Number:</label>
-                            <input type="number" class="form-control" id="filterNumber" placeholder="e.g., 7" min="0">
-                        </div>
-                    </div>
-
-                    <h5>Sort Players (Optional)</h5>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="sortPlayersBy" class="form-label">Sort By:</label>
-                            <select class="form-select" id="sortPlayersBy">
-                                <option value="">-- Select Field --</option>
-                                <option value="PlayerName">Name</option>
-                                <option value="Position">Position</option>
-                                <option value="Number">Number</option>
-                                <option value="Age">Age</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="sortPlayersOrder" class="form-label">Order:</label>
-                            <select class="form-select" id="sortPlayersOrder">
-                                <option value="asc">Ascending</option>
-                                <option value="desc">Descending</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div id="eplTeamDetailsResults">
-                        <div id="teamDetailsArea">
-                            <h6>Team Details:</h6>
-                            <p>Select a team and click "Get Details" to see information here.</p>
-                        </div>
-
-                        <div id="teamPlayersArea" class="hidden">
-                            <h6>Players:</h6>
-                            <table class="table table-striped table-bordered table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Number</th>
-                                        <th>Age</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="eplTeamPlayersTableBody">
-                                </tbody>
-                            </table>
-                        </div>
-                        <div id="eplTeamDetailsStatus"></div>
-                    </div>
-
-                    <div class="container my-4 p-3 shadow rounded">
-                        <h4>Search Teams or Players </h4>
-                        <!-- (/epl/search?key=&lt;attribute&gt;&value=&lt;value&gt; GET) -->
-                        <p>Search for teams or players by a specific attribute. Uses a "contains" filter
-                            (case-sensitive).</p>
-                        <div class="search-epl-form row g-3">
-                            <div class="col-md-4">
-                                <label for="searchEPL_Key" class="form-label">Attribute (Key):</label>
-                                <select class="form-select" id="searchEPL_Key">
-                                    <option value="">-- Select Attribute --</option>
-                                    <option value="TeamName">Team Name</option>
-                                    <option value="Players.PlayerName">Player Name</option>
-                                    <option value="Players.Position">Position</option>
-                                    <option value="TeamID">Team ID</option>
-                                    <option value="Stadium">Stadium</option>
-                                    <option value="Manager">Manager</option>
-                                    <option value="Players.Age">Age (numeric)</option>
-                                    <option value="Players.Number">Jersey Number (numeric)</option>
-                                </select>
-                            </div>
-                            <div class="col-md-5">
-                                <label for="searchEPL_Value" class="form-label">Value:</label>
-                                <input type="text" class="form-control" id="searchEPL_Value"
-                                    placeholder="Enter search term">
-                            </div>
-                            <div class="col-md-3 d-flex align-items-end">
-                                <button class="btn btn-primary me-2" onclick="searchEPLEntities()">Search</button>
-                                <button class="btn btn-secondary" onclick="clearEPLEntitySearch()">Clear Search</button>
-                            </div>
-                        </div>
-                        <div id="searchPlayerResultsEPL" class="hidden">
-                            <table>
-                                <thead>...</thead>
-                                <tbody id="searchPlayerTableBodyEPL"></tbody>
-                            </table>
-                            <div id="searchPlayerStatusEPL"></div>
-                        </div>
-                    </div>
-
-
-                    <!-- <div class="container my-4 p-3 shadow rounded">
-            <h3>Add New Player </h3> -->
-                    <!-- (/epl/players PUT) & Update Player (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; POST) -->
-                    <!-- <p>Enter player details to add a new player or update an existing one using Team ID and Jersey Number.</p>
-
-            <div class="row g-3"> <div class="col-md-4">
-                    <label for="player_TeamID" class="form-label">Team ID:</label>
-                    <input type="text" class="form-control" id="player_TeamID" placeholder="e.g., ARS">
-                </div>
-                <div class="col-md-4">
-                    <label for="player_Name" class="form-label">Player Name:</label>
-                    <input type="text" class="form-control" id="player_Name" placeholder="e.g., Bukayo Saka">
-                </div>
-                <div class="col-md-4">
-                    <label for="player_Position" class="form-label">Position:</label>
-                    <select class="form-select" id="player_Position">
-                        <option value="">-- Select Position --</option>
-                        <option value="Goalkeeper">Goalkeeper</option>
-                        <option value="Defender">Defender</option>
-                        <option value="Midfielder">Midfielder</option>
-                        <option value="Forward">Forward</option>
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <label for="player_Age" class="form-label">Age:</label>
-                    <input type="number" class="form-control" id="player_Age" placeholder="e.g., 22">
-                </div>
-                <div class="col-md-4">
-                    <label for="player_Number" class="form-label">Jersey Number:</label>
-                    <input type="number" class="form-control" id="player_Number" placeholder="e.g., 7">
-                </div>
-                <div class="col-md-12 mt-3"> <button onclick="addPlayerEPL()" class="btn btn-primary me-2">Add Player</button>
-                     <button onclick="updatePlayerEPL()" class="btn btn-secondary">Update Player</button>
-                </div>
-            </div> -->
-
-                    <!-- <div id="addPlayerStatusEPL" class="mt-3"></div>
-            <div id="updatePlayerStatusEPL" class="mt-3"></div>
-        </div>
-
-        <div class="container my-4 p-3 shadow rounded">
-            <h3>Delete Player </h3>
-                (/epl/players/&lt;team_id&gt;/&lt;jersey_number&gt; DELETE)
-            <p>Enter the player's Team ID and Jersey Number to permanently delete them.</p>
-
-            <div class="row g-3"> <div class="col-md-4">
-                    <label for="deletePlayer_TeamID" class="form-label">Team ID:</label>
-                    <input type="text" class="form-control" id="deletePlayer_TeamID" placeholder="e.g., ARS">
-                </div>
-                 <div class="col-md-4">
-                    <label for="deletePlayer_Number" class="form-label">Jersey Number:</label>
-                    <input type="number" class="form-control" id="deletePlayer_Number" placeholder="e.g., 7">
-                </div>
-                 <div class="col-md-12 mt-3"> <button onclick="deletePlayerEPL()" class="btn btn-danger">Delete Player</button>
+            <!-- List All Teams -->
+            <div class="container">
+                <h4>List All Teams</h4>
+                <button onclick="getAllTeamsEPL()">List EPL Teams</button>
+                <button class="btn-secondary" onclick="clearEPLTeamsList()">Clear List</button>
+                <div id="eplTeamListResults" class="hidden">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Team ID</th>
+                                <th>Team Name</th>
+                                <th>Stadium</th>
+                                <th>Founded</th>
+                                <th>Manager</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eplTeamTableBody"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <div id="deletePlayerStatusEPL" class="mt-3"></div>
-        </div> -->
-                    <!-- Users MAnagement Endpoints -->
-
-                    <!-- <div class="container">
-            <h3>Get User by ID (/get_user/&lt;user_id&gt; GET)</h3>
-            <input type="text" id="getUserId" placeholder="Enter User ID">
-            <button onclick="getUserById()">Get User</button>
-            <div id="getUserResult"></div>
-        </div>
-
-         <div class="container">
-            <h3>Add New User (/add_user POST)</h3>
-            <input type="text" id="addUser_UserId" placeholder="User ID (required)">
-            <input type="text" id="addUser_Name" placeholder="Name (required)">
-            <input type="text" id="addUser_Email" placeholder="Email (optional)">
-            <button onclick="addUser()">Add User</button>
-            <div id="addUserStatus"></div>
-        </div>
-
-        <div class="container">
-            <h3>Update User (/update_user/&lt;user_id&gt; PUT)</h3>
-            <input type="text" id="updateUser_UserId" placeholder="User ID to update">
-            <input type="text" id="updateUser_Name" placeholder="New Name (optional)">
-            <input type="text" id="updateUser_Email" placeholder="New Email (optional)">
-             <button onclick="updateUser()">Update User</button>
-            <div id="updateUserStatus"></div>
-        </div>
-
-        <div class="container">
-            <h3>Delete User (/delete_user/&lt;user_id&gt; DELETE)</h3>
-            <input type="text" id="deleteUserId" placeholder="User ID to delete">
-            <button onclick="deleteUser()">Delete User</button>
-            <div id="deleteUserStatus"></div>
-        </div>
-
-        <div class="container">
-            <h3>Search Users (/search_users GET)</h3>
-            <input type="text" id="searchUsers_Name" placeholder="Search by Name (optional)">
-            <input type="text" id="searchUsers_Email" placeholder="Search by Email (optional)">
-            <button onclick="searchUsers()">Search</button>
-            <div id="searchUsersResults"></div>
-        </div>
-    </div> -->
-
-                    <div class="container">
-                        <h2>API Response</h2>
-                        <div id="response">
-                            <pre>Awaiting API call...</pre>
-                        </div>
+            <!-- Get Team Details -->
+            <div class="container">
+                <h4>Get Team Details & Players</h4>
+                <div class="form-grid">
+                    <div>
+                        <label for="getEplTeamDetails_TeamId">Team ID:</label>
+                        <input type="text" id="getEplTeamDetails_TeamId" placeholder="e.g., ARS">
                     </div>
+                    <div>
+                         <button onclick="getEplTeamDetails()">Get Details</button>
+                         <button class="btn-secondary" onclick="clearEPLTeamDetails()">Clear</button>
+                    </div>
+                </div>
+                <div id="eplTeamDetailsResults" class="hidden">
+                    <div id="teamDetailsArea"></div>
+                    <div id="teamPlayersArea" class="hidden">
+                        <h4>Players</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Player ID</th>
+                                    <th>Name</th>
+                                    <th>Position</th>
+                                    <th>Number</th>
+                                    <th>Age</th>
+                                </tr>
+                            </thead>
+                            <tbody id="eplTeamPlayersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                 <div id="eplTeamDetailsStatus" class="status-message hidden"></div>
+            </div>
+            
+            <!-- Search Teams or Players -->
+            <div class="container">
+                <h4>Search Teams or Players</h4>
+                <div class="form-grid">
+                    <div>
+                        <label for="searchEPL_Key">Attribute (Key):</label>
+                        <select id="searchEPL_Key">
+                            <option value="">-- Select Attribute --</option>
+                            <option value="TeamName">Team Name</option>
+                            <option value="Stadium">Stadium</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Players.PlayerName">Player Name</option>
+                            <option value="Players.Position">Position</option>
+                            <option value="Players.Age">Age (numeric)</option>
+                            <option value="Players.Number">Jersey Number (numeric)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="searchEPL_Value">Value:</label>
+                        <input type="text" id="searchEPL_Value" placeholder="Enter search term">
+                    </div>
+                    <div>
+                        <button onclick="searchEPLEntities()">Search</button>
+                        <button class="btn-secondary" onclick="clearEPLEntitySearch()">Clear</button>
+                    </div>
+                </div>
+                <div id="searchEPLResults" class="hidden">
+                     <h4>Search Results</h4>
+                     <table id="searchEPLTable">
+                         <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>Matching Player</th>
+                                <th>Position</th>
+                                <th>Number</th>
+                                <th>Age</th>
+                            </tr>
+                         </thead>
+                         <tbody id="searchEPLTableBody"></tbody>
+                     </table>
+                </div>
+                <div id="searchEPLStatus" class="status-message hidden"></div>
+            </div>
+            
+            <!-- Add/Update/Delete Team -->
+            <div class="container">
+                <h4>Manage Teams</h4>
+                <!-- Add Team -->
+                <h5>Add New Team</h5>
+                <div class="form-grid">
+                     <div><label for="addTeam_TeamID">Team ID</label><input type="text" id="addTeam_TeamID" placeholder="e.g., MUN"></div>
+                     <div><label for="addTeam_TeamName">Team Name</label><input type="text" id="addTeam_TeamName" placeholder="e.g., Manchester United"></div>
+                     <div><label for="addTeam_Stadium">Stadium</label><input type="text" id="addTeam_Stadium" placeholder="e.g., Old Trafford"></div>
+                     <div><label for="addTeam_Founded">Founded</label><input type="number" id="addTeam_Founded" placeholder="e.g., 1878"></div>
+                     <div><label for="addTeam_Manager">Manager</label><input type="text" id="addTeam_Manager" placeholder="e.g., Erik ten Hag"></div>
+                     <div class="full-width"><button onclick="addTeamEPL()">Add Team</button></div>
+                </div>
+                <div id="addTeamStatus" class="status-message hidden"></div>
+                <hr style="margin: 25px 0;">
+                <!-- Delete Team -->
+                <h5>Delete Team</h5>
+                <div class="form-grid">
+                    <div><label for="deleteTeam_TeamID">Team ID to Delete</label><input type="text" id="deleteTeam_TeamID" placeholder="e.g., MUN"></div>
+                    <div><button class="btn-danger" onclick="deleteTeamEPL()">Delete Team</button></div>
+                </div>
+                <div id="deleteTeamStatus" class="status-message hidden"></div>
+            </div>
 
+            <!-- Add/Update/Delete Player -->
+            <div class="container">
+                <h4>Manage Players</h4>
+                <!-- Add Player -->
+                <h5>Add New Player</h5>
+                <div class="form-grid">
+                     <div><label for="addPlayer_TeamID">Team ID</label><input type="text" id="addPlayer_TeamID" placeholder="Team to add player to"></div>
+                     <div><label for="addPlayer_PlayerID">Player ID</label><input type="text" id="addPlayer_PlayerID" placeholder="Unique Player ID (e.g., 1, 2, ...)"></div>
+                     <div><label for="addPlayer_PlayerName">Player Name</label><input type="text" id="addPlayer_PlayerName" placeholder="e.g., Marcus Rashford"></div>
+                     <div><label for="addPlayer_Position">Position</label><input type="text" id="addPlayer_Position" placeholder="e.g., FW"></div>
+                     <div><label for="addPlayer_Number">Number</label><input type="number" id="addPlayer_Number" placeholder="e.g., 10"></div>
+                     <div><label for="addPlayer_Age">Age</label><input type="number" id="addPlayer_Age" placeholder="e.g., 26"></div>
+                     <div class="full-width"><button onclick="addPlayerEPL()">Add Player</button></div>
+                </div>
+                <div id="addPlayerStatus" class="status-message hidden"></div>
+                <hr style="margin: 25px 0;">
+                
+                <!-- Update Player -->
+                <h5>Update Player</h5>
+                <div class="form-grid">
+                    <div><label for="updatePlayer_TeamID">Team ID</label><input type="text" id="updatePlayer_TeamID" placeholder="Player's Team ID"></div>
+                    <div><label for="updatePlayer_PlayerID">Player ID</label><input type="text" id="updatePlayer_PlayerID" placeholder="Player's ID to update"></div>
+                    <div><label for="updatePlayer_PlayerName">New Name</label><input type="text" id="updatePlayer_PlayerName" placeholder="(optional)"></div>
+                    <div><label for="updatePlayer_Position">New Position</label><input type="text" id="updatePlayer_Position" placeholder="(optional)"></div>
+                    <div><label for="updatePlayer_Number">New Number</label><input type="number" id="updatePlayer_Number" placeholder="(optional)"></div>
+                    <div><label for="updatePlayer_Age">New Age</label><input type="number" id="updatePlayer_Age" placeholder="(optional)"></div>
+                     <div class="full-width"><button onclick="updatePlayerEPL()">Update Player</button></div>
+                </div>
+                <div id="updatePlayerStatus" class="status-message hidden"></div>
+                <hr style="margin: 25px 0;">
 
-                    <script src="script.js"></script>
+                <!-- Delete Player -->
+                <h5>Delete Player</h5>
+                <div class="form-grid">
+                    <div><label for="deletePlayer_TeamID">Team ID</label><input type="text" id="deletePlayer_TeamID" placeholder="Player's Team ID"></div>
+                    <div><label for="deletePlayer_PlayerID">Player ID to Delete</label><input type="text" id="deletePlayer_PlayerID" placeholder="Player's ID to delete"></div>
+                    <div><button class="btn-danger" onclick="deletePlayerEPL()">Delete Player</button></div>
+                </div>
+                <div id="deletePlayerStatus" class="status-message hidden"></div>
+            </div>
+        </div>
+
+        <!-- API Response -->
+        <div class="container">
+            <h2>Raw API Response</h2>
+            <div id="response">
+                <pre>Awaiting API call...</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 
 </html>

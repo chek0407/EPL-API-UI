@@ -1,26 +1,23 @@
-let apiBaseUrl = 'https://epl-flask-api.onrender.com'; // Default URL, change as needed or use the input box
+let apiBaseUrl = 'https://epl-flask-api.onrender.com'; // Default URL
 let jwtToken = null;
 
+// --- DOM Element Cache ---
 const responseDiv = document.getElementById('response').querySelector('pre');
-const loginStatusP = document.getElementById('loginStatus');
+const loginStatusDiv = document.getElementById('loginStatus');
 const protectedContent = document.querySelector('.protected-content');
-const userTableBody = document.getElementById('userTableBody');
-const getUserResultDiv = document.getElementById('getUserResult');
-const addUserStatusDiv = document.getElementById('addUserStatus');
-const updateUserStatusDiv = document.getElementById('updateUserStatus');
-const deleteUserStatusDiv = document.getElementById('deleteUserStatus');
-const searchUsersResultsDiv = document.getElementById('searchUsersResults');
-const eplTeamListResultsDiv = document.getElementById('eplTeamListResults'); // Added for EPL
+
+// EPL Elements
+const eplTeamListResultsDiv = document.getElementById('eplTeamListResults');
+const eplTeamTableBody = document.getElementById('eplTeamTableBody');
 const eplTeamDetailsResultsDiv = document.getElementById('eplTeamDetailsResults');
-const searchPlayerResultsEPLDiv = document.getElementById('searchPlayerResultsEPL');
-const filterPositionInput = document.getElementById('filterPosition');
-const filterMinAgeInput = document.getElementById('filterMinAge');
-const filterMaxAgeInput = document.getElementById('filterMaxAge');
-const filterNumberInput = document.getElementById('filterNumber');
-const sortPlayersBySelect = document.getElementById('sortPlayersBy');
-const sortPlayersOrderSelect = document.getElementById('sortPlayersOrder');
-const searchEPLKeySelect = document.getElementById('searchEPL_Key');
-const searchEPLValueInput = document.getElementById('searchEPL_Value');
+const teamDetailsArea = document.getElementById('teamDetailsArea');
+const teamPlayersArea = document.getElementById('teamPlayersArea');
+const eplTeamPlayersTableBody = document.getElementById('eplTeamPlayersTableBody');
+const eplTeamDetailsStatusDiv = document.getElementById('eplTeamDetailsStatus');
+const searchEPLResultsDiv = document.getElementById('searchEPLResults');
+const searchEPLTableBody = document.getElementById('searchEPLTableBody');
+const searchEPLStatusDiv = document.getElementById('searchEPLStatus');
+
 
 // --- Helper Functions ---
 
@@ -28,27 +25,18 @@ function updateResponseDisplay(data) {
     responseDiv.textContent = JSON.stringify(data, null, 2);
 }
 
-function showProtectedContent() {
-    protectedContent.classList.remove('hidden');
+function showStatus(div, message, type = 'info') {
+    div.textContent = message;
+    div.className = `status-message status-${type}`;
+    div.classList.remove('hidden');
 }
 
-function hideProtectedContent() {
-    protectedContent.classList.add('hidden');
-}
-
-function setApiUrl() {
-    const inputUrl = document.getElementById('apiBaseUrl').value.trim();
-    if (inputUrl) {
-        apiBaseUrl = inputUrl;
-        console.log("API Base URL set to:", apiBaseUrl);
-        alert("API URL set to " + apiBaseUrl);
-    } else {
-        alert("Please enter a valid URL.");
-    }
+function hideStatus(div) {
+    div.classList.add('hidden');
 }
 
 
-// --- API Interaction Functions ---
+// --- API Interaction ---
 
 async function loginUser() {
     const username = document.getElementById('loginUsername').value;
@@ -57,9 +45,7 @@ async function loginUser() {
     try {
         const response = await fetch(`${apiBaseUrl}/login`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
 
@@ -68,22 +54,17 @@ async function loginUser() {
 
         if (response.ok) {
             jwtToken = data.access_token;
-            loginStatusP.textContent = 'Login successful!';
-            loginStatusP.style.color = 'green';
-            showProtectedContent();
+            showStatus(loginStatusDiv, 'Login successful!', 'success');
+            protectedContent.classList.remove('hidden');
         } else {
             jwtToken = null;
-            loginStatusP.textContent = 'Login failed: ' + (data.error || data.message || response.statusText);
-            loginStatusP.style.color = 'red';
-            hideProtectedContent();
+            showStatus(loginStatusDiv, `Login failed: ${data.message || 'Unknown error'}`, 'error');
+            protectedContent.classList.add('hidden');
         }
-
     } catch (error) {
-        console.error('Login error:', error);
-        loginStatusP.textContent = 'An error occurred during login.';
-        loginStatusP.style.color = 'red';
+        showStatus(loginStatusDiv, `Client-side error: ${error.message}`, 'error');
         updateResponseDisplay({ error: 'Client-side error', details: error.message });
-        hideProtectedContent();
+        protectedContent.classList.add('hidden');
     }
 }
 
@@ -98,11 +79,7 @@ async function callApi(endpoint, method = 'GET', body = null) {
         'Content-Type': 'application/json'
     };
 
-    const options = {
-        method: method,
-        headers: headers
-    };
-
+    const options = { method, headers };
     if (body) {
         options.body = JSON.stringify(body);
     }
@@ -113,796 +90,289 @@ async function callApi(endpoint, method = 'GET', body = null) {
         updateResponseDisplay(data);
 
         if (!response.ok) {
-            alert(`API Error (${response.status}): ${data.error || data.message || response.statusText}`);
-            return null; // Indicate failure
+            // The message is now handled by the specific function calling this
+            return data; // Return error data for specific handling
         }
-
-        return data; // Return the parsed JSON data
+        return data; // Return success data
     } catch (error) {
         console.error(`API call error for ${endpoint}:`, error);
-        alert('An error occurred while calling the API.');
+        alert('A network error occurred while calling the API.');
         updateResponseDisplay({ error: 'Client-side API call error', details: error.message });
-        return null; // Indicate failure
+        return { error: `A network error occurred: ${error.message}` }; // Return error object
     }
 }
 
 
-// --- User Endpoints ---
-
-async function getAllUsers() {
-    const users = await callApi('/users_list', 'GET');
-
-    if (users) {
-        // Clear previous results
-        userTableBody.innerHTML = '';
-
-        if (Array.isArray(users)) { // Check if the response is a list
-            users.forEach(user => {
-                const row = userTableBody.insertRow();
-                row.insertCell(0).textContent = user.UserId || '';
-                row.insertCell(1).textContent = user.Name || '';
-                row.insertCell(2).textContent = user.Email || '';
-                row.insertCell(3).textContent = user.Status || '';
-                row.insertCell(4).textContent = user.CreatedAt || '';
-                // Stringify the preferences object for display, handle missing Preferences key
-                row.insertCell(5).textContent = user.Preferences ? JSON.stringify(user.Preferences) : '';
-            });
-        } else if (users.message === 'No users found') {
-            // Handle the case where the API returns a message instead of an array
-            const row = userTableBody.insertRow();
-            const cell = row.insertCell(0);
-            cell.colSpan = 6; // Span across all columns
-            cell.textContent = users.message;
-            cell.style.textAlign = 'center';
-        }
-        // You might also want to handle errors returned by the API more explicitly here
-    } else {
-        // Handle the case where callApi returns null (due to fetch error or response.ok is false)
-        userTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Failed to load users or no data received.</td></tr>';
-    }
-}
-
-
-async function getUserById() {
-    const userId = document.getElementById('getUserId').value;
-    if (!userId) {
-        alert('Please enter a User ID.');
-        return;
-    }
-    getUserResultDiv.textContent = ''; // Clear previous result
-
-    const user = await callApi(`/get_user/${userId}`, 'GET');
-
-    if (user) {
-        // Display the user object (you might format this more nicely)
-        getUserResultDiv.textContent = JSON.stringify(user, null, 2);
-    } else {
-        // Handle the case where callApi returns null (user not found or error)
-        getUserResultDiv.textContent = 'User not found or an error occurred.';
-    }
-}
-
-async function addUser() {
-    const userId = document.getElementById('addUser_UserId').value;
-    const name = document.getElementById('addUser_Name').value;
-    const email = document.getElementById('addUser_Email').value;
-    // Get values from other potential input fields
-
-    if (!userId || !name) {
-        alert('User ID and Name are required.');
-        return;
-    }
-
-    const newUser = {
-        UserId: userId,
-        Name: name,
-        // Include other fields only if they have values or defaults
-        ...(email && { Email: email }),
-        // Add other fields similarly
-    };
-
-    // Your API /add_user route expects JSON payload.
-    // The `callApi` function already stringifies the body object and sets Content-Type.
-    const result = await callApi('/add_user', 'POST', newUser);
-
-    if (result) {
-        addUserStatusDiv.textContent = result.message || 'User added successfully';
-        addUserStatusDiv.style.color = 'green';
-        // Optionally clear form fields here
-    } else {
-        addUserStatusDiv.textContent = 'Failed to add user.';
-        addUserStatusDiv.style.color = 'red';
-    }
-}
-
-async function updateUser() {
-    const userId = document.getElementById('updateUser_UserId').value;
-    const name = document.getElementById('updateUser_Name').value;
-    const email = document.getElementById('updateUser_Email').value;
-    // Get values from other potential input fields
-
-    if (!userId) {
-        alert('Please enter the User ID to update.');
-        return;
-    }
-
-    const updateData = {};
-    if (name) updateData.Name = name;
-    if (email) updateData.Email = email;
-    // Add other fields similarly, check if inputs have values
-
-    if (Object.keys(updateData).length === 0) {
-        alert('Please enter at least one field to update.');
-        return;
-    }
-
-    const result = await callApi(`/update_user/${userId}`, 'PUT', updateData);
-
-    if (result) {
-        updateUserStatusDiv.textContent = result.message || 'User updated successfully';
-        updateUserStatusDiv.style.color = 'green';
-        // Optionally clear form fields here
-    } else {
-        updateUserStatusDiv.textContent = 'Failed to update user.';
-        updateUserStatusDiv.style.color = 'red';
-    }
-}
-
-async function deleteUser() {
-    const userId = document.getElementById('deleteUserId').value;
-    if (!userId) {
-        alert('Please enter the User ID to delete.');
-        return;
-    }
-
-    const result = await callApi(`/delete_user/${userId}`, 'DELETE');
-
-    if (result) {
-        deleteUserStatusDiv.textContent = result.message || `User ${userId} deleted.`;
-        deleteUserStatusDiv.style.color = 'green';
-        // Optionally clear form field here
-    } else {
-        deleteUserStatusDiv.textContent = 'Failed to delete user.';
-        deleteUserStatusDiv.style.color = 'red';
-    }
-}
-
-async function searchUsers() {
-    const name = document.getElementById('searchUsers_Name').value;
-    const email = document.getElementById('searchUsers_Email').value;
-
-    if (!name && !email) {
-        alert('Please enter a Name or Email to search.');
-        return;
-    }
-
-    let endpoint = '/search_users?';
-    if (name) endpoint += `name=${encodeURIComponent(name)}&`;
-    if (email) endpoint += `email=${encodeURIComponent(email)}&`;
-    endpoint = endpoint.slice(0, -1); // Remove trailing & or ? if no params were added
-
-    searchUsersResultsDiv.textContent = ''; // Clear previous results
-
-    const result = await callApi(endpoint, 'GET');
-
-    if (result && result.users && Array.isArray(result.users)) {
-        if (result.users.length > 0) {
-            // Display users - you might want a dedicated table for search results
-            searchUsersResultsDiv.textContent = `Found ${result.users.length} user(s):\n` + JSON.stringify(result.users, null, 2);
-        } else {
-            searchUsersResultsDiv.textContent = 'No users found matching criteria.';
-        }
-    } else if (result && result.message) {
-        // Handle case where API returns a message like 'No users found' with 404 status
-        searchUsersResultsDiv.textContent = result.message;
-    }
-    else {
-        searchUsersResultsDiv.textContent = 'Failed to search users or no results.';
-    }
-}
-
-
-// --- EPL Endpoints ---
+// --- EPL Functions ---
 
 async function getAllTeamsEPL() {
-    const teams = await callApi('/epl/teams', 'GET');
-
-    const eplTeamTableBody = document.getElementById('eplTeamTableBody');
-    const eplTeamListResultsDiv = document.getElementById('eplTeamListResults');
-    eplTeamTableBody.innerHTML = ''; // Clear previous results
+    const teams = await callApi('/epl/teams');
+    eplTeamTableBody.innerHTML = '';
 
     if (teams && Array.isArray(teams)) {
         if (teams.length > 0) {
             teams.forEach(team => {
                 const row = eplTeamTableBody.insertRow();
-                // Add cells for each team property you want to display
                 row.insertCell(0).textContent = team.TeamID || '';
                 row.insertCell(1).textContent = team.TeamName || '';
                 row.insertCell(2).textContent = team.Stadium || '';
                 row.insertCell(3).textContent = team.Founded || '';
                 row.insertCell(4).textContent = team.Manager || '';
-                // Add more cells if you display other properties
             });
-
             eplTeamListResultsDiv.classList.remove('hidden');
-
         } else {
             const row = eplTeamTableBody.insertRow();
-            const cell = row.insertCell(0);
-            cell.colSpan = 5; // Adjust colspan based on number of columns above
-            cell.textContent = 'No EPL teams found.';
-            cell.style.textAlign = 'center';
+            row.insertCell(0).textContent = 'No EPL teams found.';
+            row.cells[0].colSpan = 5;
             eplTeamListResultsDiv.classList.remove('hidden');
         }
-    } else if (teams && teams.message) {
-        // Handle API messages like 'No users found' (if applicable to this endpoint)
+    } else {
         const row = eplTeamTableBody.insertRow();
-        const cell = row.insertCell(0);
-        cell.colSpan = 5; // Adjust colspan
-        cell.textContent = teams.message;
-        cell.style.textAlign = 'center';
+        row.insertCell(0).textContent = teams.error || 'Failed to load EPL teams.';
+        row.cells[0].colSpan = 5;
         eplTeamListResultsDiv.classList.remove('hidden');
-    }
-    else {
-        // Handle the case where callApi returns null (fetch error, network issue, API error)
-        const row = eplTeamTableBody.insertRow();
-        const cell = row.insertCell(0);
-        cell.colSpan = 5; // Adjust colspan
-        cell.textContent = 'Failed to load EPL teams.';
-        cell.style.color = 'red';
-        cell.style.textAlign = 'center';
     }
 }
 
 function clearEPLTeamsList() {
-    const eplTeamTableBody = document.getElementById('eplTeamTableBody');
-    const eplTeamListResultsDiv = document.getElementById('eplTeamListResults');
-
-    // Clear the table body content
     eplTeamTableBody.innerHTML = '';
-
-    // Hide the results div
     eplTeamListResultsDiv.classList.add('hidden');
-
-    console.log("EPL Teams list cleared.");
 }
 
 async function getEplTeamDetails() {
-    const teamIdInput = document.getElementById('getEplTeamDetails_TeamId');
-    const teamId = teamIdInput.value.trim();
-
-    const teamDetailsArea = document.getElementById('teamDetailsArea');
-    const teamPlayersArea = document.getElementById('teamPlayersArea');
-    const eplTeamPlayersTableBody = document.getElementById('eplTeamPlayersTableBody');
-    const eplTeamDetailsStatusDiv = document.getElementById('eplTeamDetailsStatus');
-
-    // Clear previous results and hide players area
-    teamDetailsArea.innerHTML = '<h4>Team Details:</h4><p>Loading...</p>';
-    eplTeamPlayersTableBody.innerHTML = '';
-    teamPlayersArea.classList.add('hidden');
-    eplTeamDetailsStatusDiv.textContent = '';
-
-
+    const teamId = document.getElementById('getEplTeamDetails_TeamId').value.trim();
     if (!teamId) {
-        eplTeamDetailsStatusDiv.textContent = 'Please enter a Team ID.';
-        eplTeamDetailsStatusDiv.style.color = 'orange';
-        teamDetailsArea.innerHTML = '<h4>Team Details:</h4><p>Enter a Team ID and click "Get Details".</p>';
+        alert('Please enter a Team ID.');
         return;
     }
+    
+    hideStatus(eplTeamDetailsStatusDiv);
+    eplTeamDetailsResultsDiv.classList.add('hidden');
 
-    eplTeamDetailsResultsDiv.classList.remove('hidden'); // Show this section
+    const result = await callApi(`/epl/teams/${teamId}/details`);
 
+    if (result && result.team) {
+        const team = result.team;
+        teamDetailsArea.innerHTML = `
+            <h4>Team Details</h4>
+            <p><strong>Team ID:</strong> ${team.TeamID || 'N/A'}</p>
+            <p><strong>Name:</strong> ${team.TeamName || 'N/A'}</p>
+            <p><strong>Stadium:</strong> ${team.Stadium || 'N/A'}</p>
+            <p><strong>Founded:</strong> ${team.Founded || 'N/A'}</p>
+            <p><strong>Manager:</strong> ${team.Manager || 'N/A'}</p>
+        `;
 
-    // --- Read values from new filter and sort controls ---
-    const positionFilter = filterPositionInput.value.trim();
-    const minAgeFilter = filterMinAgeInput.value.trim();
-    const maxAgeFilter = filterMaxAgeInput.value.trim();
-    const numberFilter = filterNumberInput.value.trim();
-    const sortByValue = sortPlayersBySelect.value;
-    const orderValue = sortPlayersOrderSelect.value;
-    // --- End of reading values ---
-
-    // --- Construct query parameters ---
-    const queryParams = new URLSearchParams();
-    if (positionFilter) {
-        queryParams.append('position', positionFilter);
-    }
-    if (minAgeFilter && !isNaN(parseInt(minAgeFilter, 10))) {
-        queryParams.append('min_age', minAgeFilter);
-    }
-    if (maxAgeFilter && !isNaN(parseInt(maxAgeFilter, 10))) {
-        queryParams.append('max_age', maxAgeFilter);
-    }
-    if (numberFilter && !isNaN(parseInt(numberFilter, 10))) {
-        queryParams.append('number', numberFilter);
-    }
-    if (sortByValue) {
-        queryParams.append('sort_by', sortByValue);
-        // Include order only if sort_by is selected
-        queryParams.append('order', orderValue);
-    }
-    // --- End of constructing query parameters ---
-
-
-    let endpoint = `/epl/teams/${encodeURIComponent(teamId)}/details`;
-
-    // Append query parameters if any exist
-    if (queryParams.toString()) {
-        endpoint += '?' + queryParams.toString();
-    }
-
-    const result = await callApi(endpoint, 'GET'); // callApi already updates the main response div
-
-    if (result) { // Assuming success if result is not null (callApi handles basic errors)
-        if (result.team) {
-            // Display Team Details
-            const team = result.team;
-            teamDetailsArea.innerHTML = `
-                <h4>Team Details:</h4>
-                <p><strong>Team ID:</strong> ${team.TeamID || 'N/A'}</p>
-                <p><strong>Team Name:</strong> ${team.TeamName || 'N/A'}</p>
-                <p><strong>Stadium:</strong> ${team.Stadium || 'N/A'}</p>
-                <p><strong>Founded:</strong> ${team.Founded || 'N/A'}</p>
-                <p><strong>Manager:</strong> ${team.Manager || 'N/A'}</p>
-                `;
-
-            // Display Players (if the 'players' key exists and is an array)
-            if (result.players && Array.isArray(result.players)) {
-                const players = result.players;
-                if (players.length > 0) {
-                    players.forEach(player => {
-                        const row = eplTeamPlayersTableBody.insertRow();
-                        row.insertCell(0).textContent = player.PlayerName || '';
-                        row.insertCell(1).textContent = player.Position || '';
-                        row.insertCell(2).textContent = player.Number || '';
-                        row.insertCell(3).textContent = player.Age || '';
-                        // Add more cells for other player properties
-                    });
-                    teamPlayersArea.classList.remove('hidden'); // Show the players table
-                } else {
-                    // Team found, but no players matched filters or exist
-                    teamPlayersArea.classList.remove('hidden'); // Show players area even if empty
-                    const row = eplTeamPlayersTableBody.insertRow();
-                    const cell = row.insertCell(0);
-                    cell.colSpan = 4;
-                    cell.textContent = 'No players found for this team with applied filters.'; // Update message
-                    cell.style.textAlign = 'center';
-                }
-
-            } else {
-                // 'players' key missing or not an array
-                teamPlayersArea.classList.remove('hidden'); // Show players area even if no players key
+        eplTeamPlayersTableBody.innerHTML = '';
+        if (result.players && Array.isArray(result.players) && result.players.length > 0) {
+            result.players.forEach(player => {
                 const row = eplTeamPlayersTableBody.insertRow();
-                const cell = row.insertCell(0);
-                cell.colSpan = 4; // Adjust colspan
-                cell.textContent = 'Player data format unexpected.';
-                cell.style.textAlign = 'center';
-                cell.style.color = 'orange';
-            }
-
-        } else if (result.error || result.message) {
-            // Handle API errors like "Team not found"
-            eplTeamDetailsStatusDiv.textContent = result.error || result.message;
-            eplTeamDetailsStatusDiv.style.color = 'red';
-            teamDetailsArea.innerHTML = '<h4>Team Details:</h4><p>Error retrieving team details.</p>';
+                row.insertCell(0).textContent = player.PlayerID || '';
+                row.insertCell(1).textContent = player.PlayerName || '';
+                row.insertCell(2).textContent = player.Position || '';
+                row.insertCell(3).textContent = player.Number ?? 'N/A';
+                row.insertCell(4).textContent = player.Age ?? 'N/A';
+            });
+            teamPlayersArea.classList.remove('hidden');
         } else {
-            // Handle unexpected successful response format
-            eplTeamDetailsStatusDiv.textContent = 'Unexpected response format for team details.';
-            eplTeamDetailsStatusDiv.style.color = 'orange';
-            teamDetailsArea.innerHTML = '<h4>Team Details:</h4><p>Could not display details.</p>';
+            teamPlayersArea.classList.add('hidden');
         }
-
-
+        eplTeamDetailsResultsDiv.classList.remove('hidden');
     } else {
-        // callApi returned null (due to fetch error or non-ok status handled inside callApi)
-        eplTeamDetailsStatusDiv.textContent = 'Failed to retrieve team details due to an API error.';
-        eplTeamDetailsStatusDiv.style.color = 'red';
-        teamDetailsArea.innerHTML = '<h4>Team Details:</h4><p>Could not load details.</p>';
+        showStatus(eplTeamDetailsStatusDiv, result.error || 'Team not found or an error occurred.', 'error');
     }
 }
 
 function clearEPLTeamDetails() {
-    const teamDetailsArea = document.getElementById('teamDetailsArea');
-    const teamPlayersArea = document.getElementById('teamPlayersArea');
-    const eplTeamPlayersTableBody = document.getElementById('eplTeamPlayersTableBody');
-    const eplTeamDetailsStatusDiv = document.getElementById('eplTeamDetailsStatus');
-    const teamIdInput = document.getElementById('getEplTeamDetails_TeamId');
-
-    // --- Add these lines to clear filter and sort inputs ---
-    filterPositionInput.value = '';
-    filterMinAgeInput.value = '';
-    filterMaxAgeInput.value = '';
-    filterNumberInput.value = '';
-    sortPlayersBySelect.value = ''; // Reset dropdown to the default empty option
-    sortPlayersOrderSelect.value = 'asc'; // Reset order dropdown to 'asc'
-    // --- End of lines to add ---
-
-
-    // Clear the input field (Team ID)
-    teamIdInput.value = '';
-
-    // Reset the details and hide players table
-    teamDetailsArea.innerHTML = '<h6>Team Details:</h6><p>Select a team and click "Get Details" to see information here.</p>';
-    eplTeamPlayersTableBody.innerHTML = '';
-    teamPlayersArea.classList.add('hidden');
-    eplTeamDetailsStatusDiv.textContent = '';
-    eplTeamDetailsStatusDiv.style.color = '';
-
-    // Hide the entire details results div
+    document.getElementById('getEplTeamDetails_TeamId').value = '';
     eplTeamDetailsResultsDiv.classList.add('hidden');
-
-    console.log("EPL Team Details cleared.");
+    hideStatus(eplTeamDetailsStatusDiv);
 }
-async function addPlayerEPL() {
-    const playerNameInput = document.getElementById('addPlayer_PlayerName');
-    const teamIdInput = document.getElementById('addPlayer_TeamID');
-    const positionInput = document.getElementById('addPlayer_Position');
-    const numberInput = document.getElementById('addPlayer_Number');
-    const ageInput = document.getElementById('addPlayer_Age');
-    // Get other input values if you added them
 
-    const addPlayerStatusEPLDiv = document.getElementById('addPlayerStatusEPL');
-    addPlayerStatusEPLDiv.textContent = ''; // Clear previous status
-    addPlayerStatusEPLDiv.style.color = ''; // Clear previous color
+async function searchEPLEntities() {
+    const key = document.getElementById('searchEPL_Key').value;
+    const value = document.getElementById('searchEPL_Value').value.trim();
 
-    const playerName = playerNameInput.value.trim();
-    const teamId = teamIdInput.value.trim();
-    const position = positionInput.value.trim();
-    const number = parseInt(numberInput.value.trim(), 10); // Convert to number
-    const age = parseInt(ageInput.value.trim(), 10);       // Convert to number
-    // Get other values...
-
-    // Basic validation
-    if (!playerName || !teamId || !position || isNaN(number) || isNaN(age)) {
-        addPlayerStatusEPLDiv.textContent = 'Please fill in all required fields (Name, Team ID, Position, Number, Age). Number and Age must be numbers.';
-        addPlayerStatusEPLDiv.style.color = 'orange';
+    if (!key || !value) {
+        alert('Please select an attribute and enter a search value.');
         return;
     }
 
-    // Construct the payload matching your player_model structure
-    // BASED ON YOUR NOTE, EntityType IS PLAYER#<Number> and TeamID is the PK
-    const newPlayerData = {
-        "TeamID": teamId.toUpperCase(), // This is likely the Partition Key (PK)
-        "EntityType": `PLAYER#${number}`, // <-- Corrected: This is likely the Sort Key (SK) based on your note
-        "PlayerName": playerName,
-        "Position": position.toUpperCase(),
-        "Number": number, // Still include Number attribute separately for convenience
-        "Age": age,
-        // Include other attributes if they have inputs
-        // "Nationality": document.getElementById('addPlayer_Nationality').value.trim(), // If you added nationality input
+    hideStatus(searchEPLStatusDiv);
+    searchEPLResultsDiv.classList.add('hidden');
+    searchEPLTableBody.innerHTML = '';
+
+    const endpoint = `/epl/search?key=${encodeURIComponent(key)}&value=${encodeURIComponent(value)}`;
+    const data = await callApi(endpoint);
+
+    if (data && data.results && Array.isArray(data.results)) {
+        if (data.results.length === 0) {
+            showStatus(searchEPLStatusDiv, 'No results found matching your criteria.', 'info');
+            return;
+        }
+
+        data.results.forEach(team => {
+            if (team.Players && team.Players.length > 0) {
+                team.Players.forEach(player => {
+                    const row = searchEPLTableBody.insertRow();
+                    row.insertCell(0).textContent = `${team.TeamName} (${team.TeamID})`;
+                    row.insertCell(1).textContent = player.PlayerName || 'N/A';
+                    row.insertCell(2).textContent = player.Position || 'N/A';
+                    row.insertCell(3).textContent = player.Number ?? 'N/A';
+                    row.insertCell(4).textContent = player.Age ?? 'N/A';
+                });
+            } else {
+                 // This handles searches for teams (like by TeamName) where we want to show the team itself
+                const row = searchEPLTableBody.insertRow();
+                row.insertCell(0).textContent = `${team.TeamName} (${team.TeamID})`;
+                row.cells[0].colSpan = 5;
+                row.cells[0].style.fontWeight = 'bold';
+            }
+        });
+        searchEPLResultsDiv.classList.remove('hidden');
+
+    } else {
+        showStatus(searchEPLStatusDiv, data.error || 'Failed to perform search.', 'error');
+    }
+}
+
+
+function clearEPLEntitySearch() {
+    document.getElementById('searchEPL_Key').value = '';
+    document.getElementById('searchEPL_Value').value = '';
+    searchEPLTableBody.innerHTML = '';
+    searchEPLResultsDiv.classList.add('hidden');
+    hideStatus(searchEPLStatusDiv);
+}
+
+// --- Manage Teams ---
+async function addTeamEPL() {
+    const statusDiv = document.getElementById('addTeamStatus');
+    const newTeam = {
+        TeamID: document.getElementById('addTeam_TeamID').value.trim(),
+        TeamName: document.getElementById('addTeam_TeamName').value.trim(),
+        Stadium: document.getElementById('addTeam_Stadium').value.trim(),
+        Founded: document.getElementById('addTeam_Founded').value.trim(),
+        Manager: document.getElementById('addTeam_Manager').value.trim()
     };
 
-    // Call the API using the POST method
-    const result = await callApi('/epl/players', 'POST', newPlayerData);
-
-    if (result) { // callApi returns the parsed JSON data on success
-        addPlayerStatusEPLDiv.textContent = result.message || 'Player added successfully!';
-        addPlayerStatusEPLDiv.style.color = 'green';
-        // Optionally clear the form fields on success
-        playerNameInput.value = '';
-        teamIdInput.value = '';
-        positionInput.value = '';
-        numberInput.value = '';
-        ageInput.value = '';
-        // Clear other fields...
-    } else {
-        // callApi will show an alert for API errors (non-2xx status) or fetch errors
-        addPlayerStatusEPLDiv.textContent = 'Failed to add player.'; // Generic failure message
-        addPlayerStatusEPLDiv.style.color = 'red';
-    }
-}
-async function searchEPLEntities() {
-    const searchPlayerTableBody = document.getElementById('searchPlayerTableBodyEPL');
-    const searchPlayerStatusDiv = document.getElementById('searchPlayerStatusEPL');
-    const searchEPLKeySelect = document.getElementById('searchEPL_Key'); // Ensure this ID matches your HTML
-    const searchEPLValueInput = document.getElementById('searchEPL_Value'); // Ensure this ID matches your HTML
-
-    // Clear previous results and status
-    searchPlayerTableBody.innerHTML = '';
-    searchPlayerStatusDiv.textContent = '';
-    searchPlayerStatusDiv.style.color = '';
-
-    // --- Declare and get the search parameters here ---
-    const searchKey = searchEPLKeySelect.value;
-    const searchValue = searchEPLValueInput.value.trim();
-    // --- End of parameter declaration ---
-
-    // Basic validation
-    if (!searchKey) {
-        searchPlayerStatusDiv.textContent = 'Please select a search attribute.';
-        searchPlayerStatusDiv.style.color = 'red';
-        return;
-    }
-    if (!searchValue) {
-        searchPlayerStatusDiv.textContent = 'Please enter a search value.';
-        searchPlayerStatusDiv.style.color = 'red';
-        return;
-    }
-
-    // Construct the API endpoint URL with key and value parameters
-    const endpoint = `/epl/search?key=${encodeURIComponent(searchKey)}&value=${encodeURIComponent(searchValue)}`;
-
-    try {
-        const result = await callApi(endpoint, 'GET');
-
-        if (result && result.results && Array.isArray(result.results)) {
-            const items = result.results; // These are the found Team documents
-
-            let playersDisplayedCount = 0; // To track how many matching players we display
-
-            if (items.length > 0) {
-                items.forEach(item => {
-                    // If the search was for a team attribute, display the team
-                    if (searchKey === 'TeamName' || searchKey === 'TeamID' || searchKey === 'Manager' || searchKey === 'Stadium') {
-                        const row = searchPlayerTableBody.insertRow();
-                        row.insertCell(0).textContent = item.TeamID || '';
-                        row.insertCell(1).textContent = item.EntityType || ''; // Will be 'TEAM'
-                        row.insertCell(2).textContent = `Team: ${item.TeamName || 'N/A'}, Manager: ${item.Manager || 'N/A'}, Stadium: ${item.Stadium || 'N/A'}`;
-                        playersDisplayedCount++; // Increment if a team is shown
-                    } else if (searchKey.startsWith('Players.')) {
-                        // If the search was for a player attribute, iterate through players and filter
-                        const playerAttributeKey = searchKey.split('.')[1]; // e.g., 'PlayerName', 'Age'
-
-                        // Ensure item.Players is an array before iterating
-                        if (Array.isArray(item.Players)) {
-                            item.Players.forEach(player => {
-                                let playerMatches = false;
-
-                                // Check if the player matches the search criteria
-                                if (playerAttributeKey === 'Age' || playerAttributeKey === 'Number') {
-                                    // For numeric attributes, compare as numbers
-                                    // Use parseFloat for robustness, then compare with ===
-                                    if (!isNaN(parseFloat(searchValue)) && parseFloat(searchValue) === player[playerAttributeKey]) {
-                                        playerMatches = true;
-                                    }
-                                } else {
-                                    // For string attributes, use case-insensitive comparison
-                                    if (player[playerAttributeKey] && typeof player[playerAttributeKey] === 'string' && player[playerAttributeKey].toLowerCase().includes(searchValue.toLowerCase())) {
-                                        playerMatches = true;
-                                    }
-                                }
-
-                                if (playerMatches) {
-                                    const row = searchPlayerTableBody.insertRow();
-                                    row.insertCell(0).textContent = item.TeamID || ''; // Still show which team they belong to
-                                    row.insertCell(1).textContent = `PLAYER#${player.PlayerID}`; // Indicate it's a player result
-                                    row.insertCell(2).textContent = `Player: ${player.PlayerName || 'N/A'}, Position: ${player.Position || 'N/A'}, Number: ${player.Number || 'N/A'}, Age: ${player.Age || 'N/A'}`;
-                                    playersDisplayedCount++;
-                                }
-                            });
-                        }
-                    }
-                });
-
-                if (playersDisplayedCount > 0) {
-                    searchPlayerStatusDiv.textContent = `Found ${playersDisplayedCount} matching item(s) for "${searchValue}" in "${searchKey}".`;
-                    searchPlayerStatusDiv.style.color = 'green';
-                } else {
-                    searchPlayerStatusDiv.textContent = `No players found matching "${searchValue}" in "${searchKey}".`;
-                    searchPlayerStatusDiv.style.color = 'orange';
-                }
-
-            } else {
-                // API returned an empty array in results.results
-                searchPlayerStatusDiv.textContent = `No teams or players found matching "${searchValue}" in "${searchKey}".`;
-                searchPlayerStatusDiv.style.color = 'orange';
-            }
-        } else if (result && (result.error || result.message)) {
-            searchPlayerStatusDiv.textContent = result.error || result.message;
-            searchPlayerStatusDiv.style.color = 'red';
-        } else {
-            searchPlayerStatusDiv.textContent = 'Failed to perform search. Unknown response format.';
-            searchPlayerStatusDiv.style.color = 'red';
-        }
-    } catch (error) {
-        console.error('Error during search:', error);
-        searchPlayerStatusDiv.textContent = `An error occurred: ${error.message}`;
-        searchPlayerStatusDiv.style.color = 'red';
-    }
-}
-function clearEPLEntitySearch() {
-    // Reuse the existing status and results divs
-    const searchPlayerTableBody = document.getElementById('searchPlayerTableBodyEPL');
-    const searchPlayerStatusDiv = document.getElementById('searchPlayerStatusEPL');
-
-    // --- Clear the new input fields ---
-    // Make sure searchEPLKeySelect and searchEPLValueInput are defined at the top
-    if (searchEPLKeySelect) searchEPLKeySelect.value = ''; // Reset dropdown
-    if (searchEPLValueInput) searchEPLValueInput.value = ''; // Clear text input
-    // --- End of clearing input fields ---
-
-
-    // Clear the table body content
-    searchPlayerTableBody.innerHTML = '';
-
-    // Clear status message
-    searchPlayerStatusDiv.textContent = '';
-    searchPlayerStatusDiv.style.color = '';
-
-    // Hide the entire search results div
-    if (searchPlayerResultsEPLDiv) searchPlayerResultsEPLDiv.classList.add('hidden');
-
-    console.log("EPL Entity search results cleared.");
-}
-// --- End of new clearEPLEntitySearch function ---
-
-async function updatePlayerEPL() {
-    // --- Get values for URL Path (using CORRECT IDs) ---
-    const teamIdInputURL = document.getElementById('updatePlayer_TeamID_URL');
-    // **CORRECTED:** Get Jersey Number input for URL using its correct ID
-    const numberInputURL = document.getElementById('updatePlayer_Number_URL'); // This should now exist in HTML
-
-    // --- Get values for Request Body (using CORRECT IDs) ---
-    const playerNameInputBody = document.getElementById('updatePlayer_PlayerName_Body');
-    const positionInputBody = document.getElementById('updatePlayer_Position_Body');
-    const ageInputBody = document.getElementById('updatePlayer_Age_Body');
-    const numberInputBody = document.getElementById('updatePlayer_Number_Body'); // Jersey Number as an attribute in the body
-    // Get other body input values if you added them
-
-    const updatePlayerStatusEPLDiv = document.getElementById('updatePlayerStatusEPL');
-    updatePlayerStatusEPLDiv.textContent = ''; // Clear previous status
-    updatePlayerStatusEPLDiv.style.color = ''; // Clear previous color
-
-    const teamIdURL = teamIdInputURL.value.trim();
-    const numberValueURL = numberInputURL.value.trim(); // Get Jersey Number string from URL input
-
-    // --- Basic Validation: Team ID and Jersey Number are required for the URL ---
-    const numberURL = parseInt(numberValueURL, 10); // Parse Jersey Number from URL input as integer
-    if (!teamIdURL || !numberValueURL || isNaN(numberURL)) {
-        updatePlayerStatusEPLDiv.textContent = 'Please enter a valid Team ID and Jersey Number for the player you want to update.';
-        updatePlayerStatusEPLDiv.style.color = 'orange';
-        return;
-    }
-
-    // --- Construct the API Endpoint URL (using /epl/players and Jersey Number) ---
-    // Example: /epl/players/LFC/66
-    // Note: We use the parsed integer numberURL here in the URL path
-    const endpoint = `/epl/players/${encodeURIComponent(teamIdURL)}/${numberURL}`;
-
-
-    // --- Construct the Request Body (Include only fields with values, using CORRECT IDs) ---
-    const updateData = {};
-    const playerNameBody = playerNameInputBody.value.trim();
-    const positionBody = positionInputBody.value.trim();
-    const ageValueBody = ageInputBody.value.trim();
-    const numberValueBody = numberInputBody.value.trim(); // Jersey Number as an attribute value
-
-
-    if (playerNameBody) {
-        updateData.PlayerName = playerNameBody;
-    }
-    if (positionBody) {
-        updateData.Position = positionBody;
-    }
-
-    // Check if Age was entered and is a valid number
-    const ageNumberBody = parseInt(ageValueBody, 10);
-    if (ageValueBody !== '' && !isNaN(ageNumberBody)) {
-        updateData.Age = ageNumberBody;
-    }
-
-    // Check if Jersey Number in body was entered and is a valid number (if updating number attribute)
-    const numberNumberBody = parseInt(numberValueBody, 10);
-    if (numberValueBody !== '' && !isNaN(numberNumberBody)) {
-        updateData.Number = numberNumberBody;
-    }
-
-    // Add other fields similarly...
-
-    // --- Optional: Check if any update fields were provided ---
-    if (Object.keys(updateData).length === 0) {
-        updatePlayerStatusEPLDiv.textContent = 'Please fill in at least one field you want to update.';
-        updatePlayerStatusEPLDiv.style.color = 'orange';
-        return;
-    }
-
-    // --- Call the API using the PUT method ---
-    const result = await callApi(endpoint, 'PUT', updateData);
-
-    if (result) { // callApi returns the parsed JSON data on success
-        updatePlayerStatusEPLDiv.textContent = result.message || 'Player updated successfully!';
-        // If your API returns updated attributes in 'updatedAttributes' key:
-        // updatePlayerStatusEPLDiv.textContent += ' Updated fields: ' + JSON.stringify(result.updatedAttributes);
-        updatePlayerStatusEPLDiv.style.color = 'green';
-        // Optionally clear the update fields on success
-        playerNameInputBody.value = '';
-        positionInputBody.value = '';
-        ageInputBody.value = '';
-        numberInputBody.value = '';
-        // Clear other body fields...
-        // Keep TeamID and Number inputs for URL filled
-    } else {
-        // callApi will show an alert for API errors (non-2xx status) or fetch errors
-        updatePlayerStatusEPLDiv.textContent = 'Failed to update player.';
-        updatePlayerStatusEPLDiv.style.color = 'red';
-    }
-}
-
-async function deletePlayerEPL() {
-    const teamIdInput = document.getElementById('deletePlayer_TeamID');
-    const numberInput = document.getElementById('deletePlayer_Number');
-    const deletePlayerStatusEPLDiv = document.getElementById('deletePlayerStatusEPL');
-
-    // Clear previous status
-    deletePlayerStatusEPLDiv.textContent = '';
-    deletePlayerStatusEPLDiv.style.color = ''; // Clear previous color
-
-    const teamId = teamIdInput.value.trim();
-    const numberValue = numberInput.value.trim(); // Get value as string initially
-
-    // --- Basic Validation: Team ID and Jersey Number are required for the URL ---
-    const number = parseInt(numberValue, 10); // Parse Jersey Number as integer
-    if (!teamId || !numberValue || isNaN(number)) {
-        deletePlayerStatusEPLDiv.textContent = 'Please enter a valid Team ID and Jersey Number for the player you want to delete.';
-        deletePlayerStatusEPLDiv.style.color = 'orange';
-        return;
-    }
-
-    // --- Construct the API Endpoint URL ---
-    // Example: /epl/players/LFC/66
-    // Use the parsed integer 'number' in the URL
-    const endpoint = `/epl/players/${encodeURIComponent(teamId)}/${number}`;
-
-    // --- Call the API using the DELETE method ---
-    // DELETE requests typically don't have a body
-    const result = await callApi(endpoint, 'DELETE');
-
-    // Handle the response
-    // callApi returns the parsed JSON data on success, or null on fetch error/non-ok status
-    if (result) { // callApi returned data (likely success message)
-        deletePlayerStatusEPLDiv.textContent = result.message || 'Player deleted successfully!';
-        deletePlayerStatusEPLDiv.style.color = 'green';
-        // Optionally clear input fields on success
-        teamIdInput.value = '';
-        numberInput.value = '';
-    } else {
-        // callApi handles showing alert for API errors (non-2xx status) or fetch errors
-        deletePlayerStatusEPLDiv.textContent = 'Failed to delete player.'; // Generic failure message
-        deletePlayerStatusEPLDiv.style.color = 'red';
-    }
-}
-// --- Placeholder Functions for Other Endpoints ---
-// Add functions here for:
-// - addTeamEPL() -> POST /epl/teams
-// - getPlayersByTeamIdEPL() -> GET /epl/teams/<team_id> (Similar to getEplTeamDetails but simpler)
-// - updateTeamEPL() -> PUT /epl/teams/<team_id>
-// - deleteTeamEPL() -> DELETE /epl/teams/<team_id>
-// - addPlayerEPL() -> POST /epl/players
-// - updatePlayerEPL() -> PUT /epl/players/<team_id>/<player_name>
-// - deletePlayerEPL() -> DELETE /epl/players/<team_id>/<player_name>
-// - searchEPL() -> GET /epl/search?key=...&value=...
-
-// Example structure for addTeamEPL:
-/*
-async function addTeamEPL() {
-    // Get values from input fields
-    const teamId = document.getElementById('addEplTeam_TeamId').value; // You need to add this input in HTML
-    const teamName = document.getElementById('addEplTeam_TeamName').value; // You need to add this input in HTML
-    // ... get other fields
-
-    if (!teamId || !teamName) {
+    if (!newTeam.TeamID || !newTeam.TeamName) {
         alert('Team ID and Team Name are required.');
         return;
     }
 
-    const newTeamData = {
-        TeamID: teamId,
-        TeamName: teamName,
-        EntityType: 'TEAM' // Assuming 'TEAM' EntityType for teams
-        // ... include other optional fields
-    };
-
-    const result = await callApi('/epl/teams', 'POST', newTeamData);
-
-    // Handle result and update UI status div (you need to add status divs in HTML)
-    if (result) {
-         // success message
+    const result = await callApi('/epl/teams', 'POST', newTeam);
+    if (result && result.team) {
+        showStatus(statusDiv, result.message || 'Team added successfully!', 'success');
+        getAllTeamsEPL(); // Refresh the list
     } else {
-         // error message
+        showStatus(statusDiv, result.message || result.error || 'Failed to add team.', 'error');
     }
 }
-*/
 
+async function deleteTeamEPL() {
+    const statusDiv = document.getElementById('deleteTeamStatus');
+    const teamId = document.getElementById('deleteTeam_TeamID').value.trim();
+    if (!teamId) {
+        alert('Please enter the Team ID to delete.');
+        return;
+    }
 
-// --- Initial State ---
-hideProtectedContent(); // Hide protected content until logged in
+    if (!confirm(`Are you sure you want to delete team ${teamId}? This action cannot be undone.`)) {
+        return;
+    }
+
+    const result = await callApi(`/epl/teams/${teamId}`, 'DELETE');
+    if (result && result.message) {
+        showStatus(statusDiv, result.message, 'success');
+        getAllTeamsEPL(); // Refresh the list
+    } else {
+        showStatus(statusDiv, result.message || result.error || 'Failed to delete team.', 'error');
+    }
+}
+
+// --- Manage Players ---
+async function addPlayerEPL() {
+    const statusDiv = document.getElementById('addPlayerStatus');
+    const teamId = document.getElementById('addPlayer_TeamID').value.trim();
+    const newPlayer = {
+        PlayerID: document.getElementById('addPlayer_PlayerID').value.trim(),
+        PlayerName: document.getElementById('addPlayer_PlayerName').value.trim(),
+        Position: document.getElementById('addPlayer_Position').value.trim(),
+        Number: parseInt(document.getElementById('addPlayer_Number').value, 10),
+        Age: parseInt(document.getElementById('addPlayer_Age').value, 10)
+    };
+
+    if (!teamId || !newPlayer.PlayerID || !newPlayer.PlayerName) {
+        alert('Team ID, Player ID, and Player Name are required.');
+        return;
+    }
+
+    const endpoint = `/epl/players?team_id=${encodeURIComponent(teamId)}`;
+    const result = await callApi(endpoint, 'POST', newPlayer);
+
+    if (result && result.player) {
+        showStatus(statusDiv, result.message || 'Player added successfully!', 'success');
+    } else {
+        showStatus(statusDiv, result.message || result.error || 'Failed to add player.', 'error');
+    }
+}
+
+async function updatePlayerEPL() {
+    const statusDiv = document.getElementById('updatePlayerStatus');
+    const teamId = document.getElementById('updatePlayer_TeamID').value.trim();
+    const playerId = document.getElementById('updatePlayer_PlayerID').value.trim();
+    
+    if (!teamId || !playerId) {
+        alert('Team ID and Player ID are required to identify the player to update.');
+        return;
+    }
+
+    const updatedPlayerData = {};
+    const playerName = document.getElementById('updatePlayer_PlayerName').value.trim();
+    const position = document.getElementById('updatePlayer_Position').value.trim();
+    const number = document.getElementById('updatePlayer_Number').value;
+    const age = document.getElementById('updatePlayer_Age').value;
+
+    if (playerName) updatedPlayerData.PlayerName = playerName;
+    if (position) updatedPlayerData.Position = position;
+    if (number) updatedPlayerData.Number = parseInt(number, 10);
+    if (age) updatedPlayerData.Age = parseInt(age, 10);
+
+    if (Object.keys(updatedPlayerData).length === 0) {
+        alert('Please enter at least one field to update.');
+        return;
+    }
+    
+    const endpoint = `/epl/players/${encodeURIComponent(teamId)}/${encodeURIComponent(playerId)}`;
+    const result = await callApi(endpoint, 'PUT', updatedPlayerData);
+
+    if (result && result.updatedAttributes) {
+        showStatus(statusDiv, result.message || 'Player updated successfully!', 'success');
+    } else {
+        showStatus(statusDiv, result.message || result.error || 'Failed to update player.', 'error');
+    }
+}
+
+async function deletePlayerEPL() {
+    const statusDiv = document.getElementById('deletePlayerStatus');
+    const teamId = document.getElementById('deletePlayer_TeamID').value.trim();
+    const playerId = document.getElementById('deletePlayer_PlayerID').value.trim();
+
+    if (!teamId || !playerId) {
+        alert('Team ID and Player ID are required to delete a player.');
+        return;
+    }
+
+    if (!confirm(`Are you sure you want to delete player ${playerId} from team ${teamId}?`)) {
+        return;
+    }
+
+    const endpoint = `/epl/players/${encodeURIComponent(teamId)}/${encodeURIComponent(playerId)}`;
+    const result = await callApi(endpoint, 'DELETE');
+
+    if (result && result.message.includes('deleted')) {
+        showStatus(statusDiv, result.message, 'success');
+    } else {
+        showStatus(statusDiv, result.message || result.error || 'Failed to delete player.', 'error');
+    }
+}
