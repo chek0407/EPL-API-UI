@@ -1,347 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EPL API UI</title>
+    <title>EPL API Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            color: #212529;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-
-        h1, h2, h3, h4 {
-            color: #0056b3;
-            margin-top: 20px;
-            margin-bottom: 10px;
+        .sidebar-link {
+            transition: all 0.2s ease-in-out;
         }
-
-        .container {
-            background-color: #fff;
-            margin-bottom: 25px;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            border: 1px solid #dee2e6;
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: #eef2ff;
+            color: #4f46e5;
+            transform: translateX(4px);
         }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="number"],
-        select,
-        button {
-            padding: 10px 15px;
-            margin-right: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            font-size: 1em;
-            vertical-align: middle;
-            box-sizing: border-box;
+        .form-input {
+            @apply w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500;
         }
-        
-        input, select {
-             width: calc(100% - 22px); /* Adjust width for padding and border */
+        .btn {
+            @apply inline-flex items-center justify-center px-4 py-2 font-semibold text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
         }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            width: auto;
+        .btn-primary {
+            @apply bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500;
         }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-        
         .btn-secondary {
-            background-color: #6c757d;
+            @apply bg-gray-500 hover:bg-gray-600 focus:ring-gray-400;
         }
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-
         .btn-danger {
-            background-color: #dc3545;
+             @apply bg-red-600 hover:bg-red-700 focus:ring-red-500;
         }
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 15px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-
-        th, td {
-            border: 1px solid #dee2e6;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #e9ecef;
-            font-weight: 600;
-            color: #495057;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        #response pre {
-            background-color: #212529;
-            color: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            max-height: 400px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .status-message {
-            margin-top: 10px;
-            font-weight: bold;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .status-success { color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb;}
-        .status-error { color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
-        .status-info { color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb;}
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            align-items: end;
-        }
-        .form-grid .full-width {
-            grid-column: 1 / -1;
-        }
-        .form-grid label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-
     </style>
 </head>
+<body class="bg-gray-100 text-gray-800">
 
-<body>
-    <h1>EPL API UI</h1>
-
-    <div class="container">
-        <h2>Login</h2>
-        <div class="form-grid">
-            <div>
-                <input type="text" id="loginUsername" placeholder="Username" value="vladi">
-            </div>
-            <div>
-                <input type="password" id="loginPassword" placeholder="Password" value="Aa111111">
-            </div>
-            <div>
-                <button onclick="loginUser()">Login</button>
-            </div>
-        </div>
-        <div id="loginStatus" class="status-message hidden"></div>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x divide-gray-200 rounded-lg shadow-lg opacity-0 transform translate-y-5 transition-all duration-300" role="alert">
+        <div id="toast-icon" class="text-2xl"></div>
+        <div id="toast-message" class="pl-4 text-sm font-normal"></div>
     </div>
 
-    <div class="protected-content hidden">
-        
-        <!-- EPL Operations -->
-        <div class="container">
-            <h2>EPL Operations</h2>
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0">
+            <div class="p-6">
+                <h1 class="text-2xl font-bold text-indigo-600">EPL Dashboard</h1>
+            </div>
+            <nav class="mt-2">
+                <a href="#section-teams" class="sidebar-link flex items-center px-6 py-3 text-gray-600 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-3"><path d="M12 22l-8-4 8-4 8 4-8 4z"/><path d="M12 2l-8 4 8 4 8-4-8-4z"/><path d="M4 12l8 4 8-4"/></svg>
+                    Manage Teams
+                </a>
+                <a href="#section-players" class="sidebar-link flex items-center px-6 py-3 text-gray-600 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-3"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Manage Players
+                </a>
+                 <a href="#section-search" class="sidebar-link flex items-center px-6 py-3 text-gray-600 font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 mr-3"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    Search
+                </a>
+            </nav>
+        </aside>
 
-            <!-- List All Teams -->
-            <div class="container">
-                <h4>List All Teams</h4>
-                <button onclick="getAllTeamsEPL()">List EPL Teams</button>
-                <button class="btn-secondary" onclick="clearEPLTeamsList()">Clear List</button>
-                <div id="eplTeamListResults" class="hidden">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Team ID</th>
-                                <th>Team Name</th>
-                                <th>Stadium</th>
-                                <th>Founded</th>
-                                <th>Manager</th>
-                            </tr>
-                        </thead>
-                        <tbody id="eplTeamTableBody"></tbody>
-                    </table>
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto">
+            <div class="p-8">
+                <!-- Login Section -->
+                <div id="login-section" class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold text-center mb-6">Login to API</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="loginUsername" class="block text-sm font-medium text-gray-700">Username</label>
+                            <input type="text" id="loginUsername" class="form-input mt-1" value="vladi">
+                        </div>
+                        <div>
+                            <label for="loginPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                            <input type="password" id="loginPassword" class="form-input mt-1" value="Aa111111">
+                        </div>
+                        <button onclick="loginUser()" class="btn btn-primary w-full">Login</button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Get Team Details -->
-            <div class="container">
-                <h4>Get Team Details & Players</h4>
-                <div class="form-grid">
-                    <div>
-                        <label for="getEplTeamDetails_TeamId">Team ID:</label>
-                        <input type="text" id="getEplTeamDetails_TeamId" placeholder="e.g., ARS">
+                <!-- Protected Content -->
+                <div id="protected-content" class="hidden space-y-8">
+                    
+                    <!-- Team Management -->
+                    <div id="section-teams" class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Team Management</h3>
+                        <!-- List Teams -->
+                        <div class="mb-6">
+                            <button onclick="getAllTeamsEPL()" class="btn btn-primary">List All Teams</button>
+                            <div id="eplTeamListResults" class="hidden mt-4 overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stadium</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manager</th></tr></thead>
+                                    <tbody id="eplTeamTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Add Team -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-md">
+                             <h4 class="font-semibold mb-3">Add New Team</h4>
+                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div><label for="addTeam_TeamID" class="text-sm">Team ID</label><input type="text" id="addTeam_TeamID" class="form-input" placeholder="e.g., MUN"></div>
+                                <div><label for="addTeam_TeamName" class="text-sm">Team Name</label><input type="text" id="addTeam_TeamName" class="form-input" placeholder="e.g., Man United"></div>
+                                <div><label for="addTeam_Stadium" class="text-sm">Stadium</label><input type="text" id="addTeam_Stadium" class="form-input" placeholder="e.g., Old Trafford"></div>
+                                <div><label for="addTeam_Founded" class="text-sm">Founded</label><input type="number" id="addTeam_Founded" class="form-input" placeholder="e.g., 1878"></div>
+                                <div><label for="addTeam_Manager" class="text-sm">Manager</label><input type="text" id="addTeam_Manager" class="form-input" placeholder="e.g., E. ten Hag"></div>
+                             </div>
+                             <button onclick="addTeamEPL()" class="btn btn-primary mt-4">Add Team</button>
+                        </div>
+                        <!-- Delete Team -->
+                        <div class="p-4 bg-red-50 rounded-md">
+                            <h4 class="font-semibold mb-3 text-red-800">Delete Team</h4>
+                            <div class="flex items-end gap-4">
+                                <div class="flex-grow"><label for="deleteTeam_TeamID" class="text-sm">Team ID to Delete</label><input type="text" id="deleteTeam_TeamID" class="form-input" placeholder="e.g., MUN"></div>
+                                <div><button class="btn btn-danger" onclick="deleteTeamEPL()">Delete</button></div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                         <button onclick="getEplTeamDetails()">Get Details</button>
-                         <button class="btn-secondary" onclick="clearEPLTeamDetails()">Clear</button>
-                    </div>
-                </div>
-                <div id="eplTeamDetailsResults" class="hidden">
-                    <div id="teamDetailsArea"></div>
-                    <div id="teamPlayersArea" class="hidden">
-                        <h4>Players</h4>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Player ID</th>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Number</th>
-                                    <th>Age</th>
-                                </tr>
-                            </thead>
-                            <tbody id="eplTeamPlayersTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-                 <div id="eplTeamDetailsStatus" class="status-message hidden"></div>
-            </div>
-            
-            <!-- Search Teams or Players -->
-            <div class="container">
-                <h4>Search Teams or Players</h4>
-                <div class="form-grid">
-                    <div>
-                        <label for="searchEPL_Key">Attribute (Key):</label>
-                        <select id="searchEPL_Key">
-                            <option value="">-- Select Attribute --</option>
-                            <option value="TeamName">Team Name</option>
-                            <option value="Stadium">Stadium</option>
-                            <option value="Manager">Manager</option>
-                            <option value="Players.PlayerName">Player Name</option>
-                            <option value="Players.Position">Position</option>
-                            <option value="Players.Age">Age (numeric)</option>
-                            <option value="Players.Number">Jersey Number (numeric)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="searchEPL_Value">Value:</label>
-                        <input type="text" id="searchEPL_Value" placeholder="Enter search term">
-                    </div>
-                    <div>
-                        <button onclick="searchEPLEntities()">Search</button>
-                        <button class="btn-secondary" onclick="clearEPLEntitySearch()">Clear</button>
-                    </div>
-                </div>
-                <div id="searchEPLResults" class="hidden">
-                     <h4>Search Results</h4>
-                     <table id="searchEPLTable">
-                         <thead>
-                            <tr>
-                                <th>Team</th>
-                                <th>Matching Player</th>
-                                <th>Position</th>
-                                <th>Number</th>
-                                <th>Age</th>
-                            </tr>
-                         </thead>
-                         <tbody id="searchEPLTableBody"></tbody>
-                     </table>
-                </div>
-                <div id="searchEPLStatus" class="status-message hidden"></div>
-            </div>
-            
-            <!-- Add/Update/Delete Team -->
-            <div class="container">
-                <h4>Manage Teams</h4>
-                <!-- Add Team -->
-                <h5>Add New Team</h5>
-                <div class="form-grid">
-                     <div><label for="addTeam_TeamID">Team ID</label><input type="text" id="addTeam_TeamID" placeholder="e.g., MUN"></div>
-                     <div><label for="addTeam_TeamName">Team Name</label><input type="text" id="addTeam_TeamName" placeholder="e.g., Manchester United"></div>
-                     <div><label for="addTeam_Stadium">Stadium</label><input type="text" id="addTeam_Stadium" placeholder="e.g., Old Trafford"></div>
-                     <div><label for="addTeam_Founded">Founded</label><input type="number" id="addTeam_Founded" placeholder="e.g., 1878"></div>
-                     <div><label for="addTeam_Manager">Manager</label><input type="text" id="addTeam_Manager" placeholder="e.g., Erik ten Hag"></div>
-                     <div class="full-width"><button onclick="addTeamEPL()">Add Team</button></div>
-                </div>
-                <div id="addTeamStatus" class="status-message hidden"></div>
-                <hr style="margin: 25px 0;">
-                <!-- Delete Team -->
-                <h5>Delete Team</h5>
-                <div class="form-grid">
-                    <div><label for="deleteTeam_TeamID">Team ID to Delete</label><input type="text" id="deleteTeam_TeamID" placeholder="e.g., MUN"></div>
-                    <div><button class="btn-danger" onclick="deleteTeamEPL()">Delete Team</button></div>
-                </div>
-                <div id="deleteTeamStatus" class="status-message hidden"></div>
-            </div>
 
-            <!-- Add/Update/Delete Player -->
-            <div class="container">
-                <h4>Manage Players</h4>
-                <!-- Add Player -->
-                <h5>Add New Player</h5>
-                <div class="form-grid">
-                     <div><label for="addPlayer_TeamID">Team ID</label><input type="text" id="addPlayer_TeamID" placeholder="Team to add player to"></div>
-                     <div><label for="addPlayer_PlayerID">Player ID</label><input type="text" id="addPlayer_PlayerID" placeholder="Unique Player ID (e.g., 1, 2, ...)"></div>
-                     <div><label for="addPlayer_PlayerName">Player Name</label><input type="text" id="addPlayer_PlayerName" placeholder="e.g., Marcus Rashford"></div>
-                     <div><label for="addPlayer_Position">Position</label><input type="text" id="addPlayer_Position" placeholder="e.g., FW"></div>
-                     <div><label for="addPlayer_Number">Number</label><input type="number" id="addPlayer_Number" placeholder="e.g., 10"></div>
-                     <div><label for="addPlayer_Age">Age</label><input type="number" id="addPlayer_Age" placeholder="e.g., 26"></div>
-                     <div class="full-width"><button onclick="addPlayerEPL()">Add Player</button></div>
-                </div>
-                <div id="addPlayerStatus" class="status-message hidden"></div>
-                <hr style="margin: 25px 0;">
-                
-                <!-- Update Player -->
-                <h5>Update Player</h5>
-                <div class="form-grid">
-                    <div><label for="updatePlayer_TeamID">Team ID</label><input type="text" id="updatePlayer_TeamID" placeholder="Player's Team ID"></div>
-                    <div><label for="updatePlayer_PlayerID">Player ID</label><input type="text" id="updatePlayer_PlayerID" placeholder="Player's ID to update"></div>
-                    <div><label for="updatePlayer_PlayerName">New Name</label><input type="text" id="updatePlayer_PlayerName" placeholder="(optional)"></div>
-                    <div><label for="updatePlayer_Position">New Position</label><input type="text" id="updatePlayer_Position" placeholder="(optional)"></div>
-                    <div><label for="updatePlayer_Number">New Number</label><input type="number" id="updatePlayer_Number" placeholder="(optional)"></div>
-                    <div><label for="updatePlayer_Age">New Age</label><input type="number" id="updatePlayer_Age" placeholder="(optional)"></div>
-                     <div class="full-width"><button onclick="updatePlayerEPL()">Update Player</button></div>
-                </div>
-                <div id="updatePlayerStatus" class="status-message hidden"></div>
-                <hr style="margin: 25px 0;">
+                    <!-- Player Management -->
+                    <div id="section-players" class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold mb-4">Player Management</h3>
+                        <!-- Add Player -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-md">
+                            <h4 class="font-semibold mb-3">Add New Player</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div><label for="addPlayer_TeamID" class="text-sm">Team ID</label><input type="text" id="addPlayer_TeamID" class="form-input" placeholder="Team to add player to"></div>
+                                <div><label for="addPlayer_PlayerID" class="text-sm">Player ID</label><input type="text" id="addPlayer_PlayerID" class="form-input" placeholder="Unique Player ID"></div>
+                                <div><label for="addPlayer_PlayerName" class="text-sm">Player Name</label><input type="text" id="addPlayer_PlayerName" class="form-input"></div>
+                                <div><label for="addPlayer_Position" class="text-sm">Position</label><input type="text" id="addPlayer_Position" class="form-input"></div>
+                                <div><label for="addPlayer_Number" class="text-sm">Number</label><input type="number" id="addPlayer_Number" class="form-input"></div>
+                                <div><label for="addPlayer_Age" class="text-sm">Age</label><input type="number" id="addPlayer_Age" class="form-input"></div>
+                            </div>
+                            <button onclick="addPlayerEPL()" class="btn btn-primary mt-4">Add Player</button>
+                        </div>
+                        <!-- Update Player -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-md">
+                            <h4 class="font-semibold mb-3">Update Player</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div><label for="updatePlayer_TeamID" class="text-sm">Team ID</label><input type="text" id="updatePlayer_TeamID" class="form-input"></div>
+                                <div><label for="updatePlayer_PlayerID" class="text-sm">Player ID</label><input type="text" id="updatePlayer_PlayerID" class="form-input"></div>
+                                <div><label for="updatePlayer_PlayerName" class="text-sm">New Name</label><input type="text" id="updatePlayer_PlayerName" class="form-input" placeholder="(optional)"></div>
+                                <div><label for="updatePlayer_Position" class="text-sm">New Position</label><input type="text" id="updatePlayer_Position" class="form-input" placeholder="(optional)"></div>
+                                <div><label for="updatePlayer_Number" class="text-sm">New Number</label><input type="number" id="updatePlayer_Number" class="form-input" placeholder="(optional)"></div>
+                                <div><label for="updatePlayer_Age" class="text-sm">New Age</label><input type="number" id="updatePlayer_Age" class="form-input" placeholder="(optional)"></div>
+                            </div>
+                             <button onclick="updatePlayerEPL()" class="btn btn-primary mt-4">Update Player</button>
+                        </div>
+                        <!-- Delete Player -->
+                        <div class="p-4 bg-red-50 rounded-md">
+                            <h4 class="font-semibold mb-3 text-red-800">Delete Player</h4>
+                            <div class="flex items-end gap-4">
+                                <div class="flex-grow"><label for="deletePlayer_TeamID" class="text-sm">Team ID</label><input type="text" id="deletePlayer_TeamID" class="form-input"></div>
+                                <div class="flex-grow"><label for="deletePlayer_PlayerID" class="text-sm">Player ID to Delete</label><input type="text" id="deletePlayer_PlayerID" class="form-input"></div>
+                                <div><button class="btn btn-danger" onclick="deletePlayerEPL()">Delete</button></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Search -->
+                    <div id="section-search" class="bg-white p-6 rounded-lg shadow-md">
+                         <h3 class="text-xl font-semibold mb-4">Search</h3>
+                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label for="searchEPL_Key" class="block text-sm font-medium text-gray-700">Attribute</label>
+                                <select id="searchEPL_Key" class="form-input mt-1">
+                                    <option value="">-- Select --</option>
+                                    <option value="TeamName">Team Name</option>
+                                    <option value="Players.PlayerName">Player Name</option>
+                                    <option value="Players.Position">Position</option>
+                                    <option value="Players.Age">Age</option>
+                                    <option value="Players.Number">Number</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="searchEPL_Value" class="block text-sm font-medium text-gray-700">Value</label>
+                                <input type="text" id="searchEPL_Value" class="form-input mt-1" placeholder="Enter search term">
+                            </div>
+                            <div>
+                                <button onclick="searchEPLEntities()" class="btn btn-primary w-full">Search</button>
+                            </div>
+                         </div>
+                         <div id="searchEPLResults" class="hidden mt-4 overflow-x-auto">
+                             <table class="min-w-full divide-y divide-gray-200">
+                                 <thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Team</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Matching Player</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Number</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th></tr></thead>
+                                 <tbody id="searchEPLTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                             </table>
+                         </div>
+                    </div>
 
-                <!-- Delete Player -->
-                <h5>Delete Player</h5>
-                <div class="form-grid">
-                    <div><label for="deletePlayer_TeamID">Team ID</label><input type="text" id="deletePlayer_TeamID" placeholder="Player's Team ID"></div>
-                    <div><label for="deletePlayer_PlayerID">Player ID to Delete</label><input type="text" id="deletePlayer_PlayerID" placeholder="Player's ID to delete"></div>
-                    <div><button class="btn-danger" onclick="deletePlayerEPL()">Delete Player</button></div>
+                    <!-- API Response -->
+                    <div class="bg-white rounded-lg shadow-md">
+                        <button id="response-toggle" class="w-full text-left p-4 font-semibold">Raw API Response</button>
+                        <div id="response-content" class="hidden p-4 border-t border-gray-200">
+                            <pre class="bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">Awaiting API call...</pre>
+                        </div>
+                    </div>
                 </div>
-                <div id="deletePlayerStatus" class="status-message hidden"></div>
             </div>
-        </div>
-
-        <!-- API Response -->
-        <div class="container">
-            <h2>Raw API Response</h2>
-            <div id="response">
-                <pre>Awaiting API call...</pre>
-            </div>
-        </div>
+        </main>
     </div>
 
     <script src="script.js"></script>
 </body>
-
 </html>
