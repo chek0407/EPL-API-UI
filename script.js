@@ -303,7 +303,6 @@ async function updatePlayerEPL() {
         showToast(result.error || 'Failed to update player.', 'error');
     }
 }
-
 async function deletePlayerEPL() {
     const teamId = document.getElementById('deletePlayer_TeamID').value.trim();
     const playerId = document.getElementById('deletePlayer_PlayerID').value.trim();
