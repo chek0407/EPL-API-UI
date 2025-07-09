@@ -32,24 +32,29 @@
             color: #4f46e5;
             transform: translateX(4px);
         }
+        /* Updated form input style for better visibility */
         .form-input {
-            @apply w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500;
+            @apply w-full px-3 py-2 bg-white border-2 border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors;
         }
         .btn {
-            @apply inline-flex items-center justify-center px-4 py-2 font-semibold text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
+            @apply inline-flex items-center justify-center px-4 py-2 font-semibold text-white rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-transform transform hover:scale-105;
         }
         .btn-primary {
             @apply bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500;
         }
         .btn-secondary {
-            @apply bg-gray-500 hover:bg-gray-600 focus:ring-gray-400;
+            @apply bg-slate-500 hover:bg-slate-600 focus:ring-slate-400;
         }
         .btn-danger {
              @apply bg-red-600 hover:bg-red-700 focus:ring-red-500;
         }
+        /* Style for labels to add spacing */
+        .form-label {
+            @apply block text-sm font-medium text-gray-700 mb-1;
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
+<body class="bg-slate-100 text-gray-800">
 
     <!-- Toast Notification -->
     <div id="toast" class="fixed bottom-5 right-5 flex items-center w-full max-w-xs p-4 space-x-4 text-gray-500 bg-white divide-x divide-gray-200 rounded-lg shadow-lg opacity-0 transform translate-y-5 transition-all duration-300" role="alert">
@@ -87,12 +92,12 @@
                     <h2 class="text-2xl font-bold text-center mb-6">Login to API</h2>
                     <div class="space-y-4">
                         <div>
-                            <label for="loginUsername" class="block text-sm font-medium text-gray-700">Username</label>
-                            <input type="text" id="loginUsername" class="form-input mt-1" value="vladi">
+                            <label for="loginUsername" class="form-label">Username</label>
+                            <input type="text" id="loginUsername" class="form-input" value="vladi">
                         </div>
                         <div>
-                            <label for="loginPassword" class="block text-sm font-medium text-gray-700">Password</label>
-                            <input type="password" id="loginPassword" class="form-input mt-1" value="Aa111111">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" id="loginPassword" class="form-input" value="Aa111111">
                         </div>
                         <button onclick="loginUser()" class="btn btn-primary w-full">Login</button>
                     </div>
@@ -106,7 +111,10 @@
                         <h3 class="text-xl font-semibold mb-4">Team Management</h3>
                         <!-- List Teams -->
                         <div class="mb-6">
-                            <button onclick="getAllTeamsEPL()" class="btn btn-primary">List All Teams</button>
+                            <div class="flex space-x-2">
+                                <button onclick="getAllTeamsEPL()" class="btn btn-primary">List All Teams</button>
+                                <button onclick="clearEPLTeamsList()" class="btn btn-secondary">Clear List</button>
+                            </div>
                             <div id="eplTeamListResults" class="hidden mt-4 overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stadium</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Manager</th></tr></thead>
@@ -115,22 +123,22 @@
                             </div>
                         </div>
                         <!-- Add Team -->
-                        <div class="mb-6 p-4 bg-gray-50 rounded-md">
+                        <div class="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200">
                              <h4 class="font-semibold mb-3">Add New Team</h4>
                              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div><label for="addTeam_TeamID" class="text-sm">Team ID</label><input type="text" id="addTeam_TeamID" class="form-input" placeholder="e.g., MUN"></div>
-                                <div><label for="addTeam_TeamName" class="text-sm">Team Name</label><input type="text" id="addTeam_TeamName" class="form-input" placeholder="e.g., Man United"></div>
-                                <div><label for="addTeam_Stadium" class="text-sm">Stadium</label><input type="text" id="addTeam_Stadium" class="form-input" placeholder="e.g., Old Trafford"></div>
-                                <div><label for="addTeam_Founded" class="text-sm">Founded</label><input type="number" id="addTeam_Founded" class="form-input" placeholder="e.g., 1878"></div>
-                                <div><label for="addTeam_Manager" class="text-sm">Manager</label><input type="text" id="addTeam_Manager" class="form-input" placeholder="e.g., E. ten Hag"></div>
+                                <div><label for="addTeam_TeamID" class="form-label">Team ID</label><input type="text" id="addTeam_TeamID" class="form-input" placeholder="e.g., MUN"></div>
+                                <div><label for="addTeam_TeamName" class="form-label">Team Name</label><input type="text" id="addTeam_TeamName" class="form-input" placeholder="e.g., Man United"></div>
+                                <div><label for="addTeam_Stadium" class="form-label">Stadium</label><input type="text" id="addTeam_Stadium" class="form-input" placeholder="e.g., Old Trafford"></div>
+                                <div><label for="addTeam_Founded" class="form-label">Founded</label><input type="number" id="addTeam_Founded" class="form-input" placeholder="e.g., 1878"></div>
+                                <div><label for="addTeam_Manager" class="form-label">Manager</label><input type="text" id="addTeam_Manager" class="form-input" placeholder="e.g., E. ten Hag"></div>
                              </div>
                              <button onclick="addTeamEPL()" class="btn btn-primary mt-4">Add Team</button>
                         </div>
                         <!-- Delete Team -->
-                        <div class="p-4 bg-red-50 rounded-md">
+                        <div class="p-4 bg-red-50 rounded-md border border-red-200">
                             <h4 class="font-semibold mb-3 text-red-800">Delete Team</h4>
                             <div class="flex items-end gap-4">
-                                <div class="flex-grow"><label for="deleteTeam_TeamID" class="text-sm">Team ID to Delete</label><input type="text" id="deleteTeam_TeamID" class="form-input" placeholder="e.g., MUN"></div>
+                                <div class="flex-grow"><label for="deleteTeam_TeamID" class="form-label">Team ID to Delete</label><input type="text" id="deleteTeam_TeamID" class="form-input" placeholder="e.g., MUN"></div>
                                 <div><button class="btn btn-danger" onclick="deleteTeamEPL()">Delete</button></div>
                             </div>
                         </div>
@@ -140,37 +148,37 @@
                     <div id="section-players" class="bg-white p-6 rounded-lg shadow-md">
                         <h3 class="text-xl font-semibold mb-4">Player Management</h3>
                         <!-- Add Player -->
-                        <div class="mb-6 p-4 bg-gray-50 rounded-md">
+                        <div class="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200">
                             <h4 class="font-semibold mb-3">Add New Player</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div><label for="addPlayer_TeamID" class="text-sm">Team ID</label><input type="text" id="addPlayer_TeamID" class="form-input" placeholder="Team to add player to"></div>
-                                <div><label for="addPlayer_PlayerID" class="text-sm">Player ID</label><input type="text" id="addPlayer_PlayerID" class="form-input" placeholder="Unique Player ID"></div>
-                                <div><label for="addPlayer_PlayerName" class="text-sm">Player Name</label><input type="text" id="addPlayer_PlayerName" class="form-input"></div>
-                                <div><label for="addPlayer_Position" class="text-sm">Position</label><input type="text" id="addPlayer_Position" class="form-input"></div>
-                                <div><label for="addPlayer_Number" class="text-sm">Number</label><input type="number" id="addPlayer_Number" class="form-input"></div>
-                                <div><label for="addPlayer_Age" class="text-sm">Age</label><input type="number" id="addPlayer_Age" class="form-input"></div>
+                                <div><label for="addPlayer_TeamID" class="form-label">Team ID</label><input type="text" id="addPlayer_TeamID" class="form-input" placeholder="Team to add player to"></div>
+                                <div><label for="addPlayer_PlayerID" class="form-label">Player ID</label><input type="text" id="addPlayer_PlayerID" class="form-input" placeholder="Unique Player ID"></div>
+                                <div><label for="addPlayer_PlayerName" class="form-label">Player Name</label><input type="text" id="addPlayer_PlayerName" class="form-input"></div>
+                                <div><label for="addPlayer_Position" class="form-label">Position</label><input type="text" id="addPlayer_Position" class="form-input"></div>
+                                <div><label for="addPlayer_Number" class="form-label">Number</label><input type="number" id="addPlayer_Number" class="form-input"></div>
+                                <div><label for="addPlayer_Age" class="form-label">Age</label><input type="number" id="addPlayer_Age" class="form-input"></div>
                             </div>
                             <button onclick="addPlayerEPL()" class="btn btn-primary mt-4">Add Player</button>
                         </div>
                         <!-- Update Player -->
-                        <div class="mb-6 p-4 bg-gray-50 rounded-md">
+                        <div class="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200">
                             <h4 class="font-semibold mb-3">Update Player</h4>
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div><label for="updatePlayer_TeamID" class="text-sm">Team ID</label><input type="text" id="updatePlayer_TeamID" class="form-input"></div>
-                                <div><label for="updatePlayer_PlayerID" class="text-sm">Player ID</label><input type="text" id="updatePlayer_PlayerID" class="form-input"></div>
-                                <div><label for="updatePlayer_PlayerName" class="text-sm">New Name</label><input type="text" id="updatePlayer_PlayerName" class="form-input" placeholder="(optional)"></div>
-                                <div><label for="updatePlayer_Position" class="text-sm">New Position</label><input type="text" id="updatePlayer_Position" class="form-input" placeholder="(optional)"></div>
-                                <div><label for="updatePlayer_Number" class="text-sm">New Number</label><input type="number" id="updatePlayer_Number" class="form-input" placeholder="(optional)"></div>
-                                <div><label for="updatePlayer_Age" class="text-sm">New Age</label><input type="number" id="updatePlayer_Age" class="form-input" placeholder="(optional)"></div>
+                                <div><label for="updatePlayer_TeamID" class="form-label">Team ID</label><input type="text" id="updatePlayer_TeamID" class="form-input"></div>
+                                <div><label for="updatePlayer_PlayerID" class="form-label">Player ID</label><input type="text" id="updatePlayer_PlayerID" class="form-input"></div>
+                                <div><label for="updatePlayer_PlayerName" class="form-label">New Name</label><input type="text" id="updatePlayer_PlayerName" class="form-input" placeholder="(optional)"></div>
+                                <div><label for="updatePlayer_Position" class="form-label">New Position</label><input type="text" id="updatePlayer_Position" class="form-input" placeholder="(optional)"></div>
+                                <div><label for="updatePlayer_Number" class="form-label">New Number</label><input type="number" id="updatePlayer_Number" class="form-input" placeholder="(optional)"></div>
+                                <div><label for="updatePlayer_Age" class="form-label">New Age</label><input type="number" id="updatePlayer_Age" class="form-input" placeholder="(optional)"></div>
                             </div>
                              <button onclick="updatePlayerEPL()" class="btn btn-primary mt-4">Update Player</button>
                         </div>
                         <!-- Delete Player -->
-                        <div class="p-4 bg-red-50 rounded-md">
+                        <div class="p-4 bg-red-50 rounded-md border border-red-200">
                             <h4 class="font-semibold mb-3 text-red-800">Delete Player</h4>
                             <div class="flex items-end gap-4">
-                                <div class="flex-grow"><label for="deletePlayer_TeamID" class="text-sm">Team ID</label><input type="text" id="deletePlayer_TeamID" class="form-input"></div>
-                                <div class="flex-grow"><label for="deletePlayer_PlayerID" class="text-sm">Player ID to Delete</label><input type="text" id="deletePlayer_PlayerID" class="form-input"></div>
+                                <div class="flex-grow"><label for="deletePlayer_TeamID" class="form-label">Team ID</label><input type="text" id="deletePlayer_TeamID" class="form-input"></div>
+                                <div class="flex-grow"><label for="deletePlayer_PlayerID" class="form-label">Player ID to Delete</label><input type="text" id="deletePlayer_PlayerID" class="form-input"></div>
                                 <div><button class="btn btn-danger" onclick="deletePlayerEPL()">Delete</button></div>
                             </div>
                         </div>
@@ -181,8 +189,8 @@
                          <h3 class="text-xl font-semibold mb-4">Search</h3>
                          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
                             <div>
-                                <label for="searchEPL_Key" class="block text-sm font-medium text-gray-700">Attribute</label>
-                                <select id="searchEPL_Key" class="form-input mt-1">
+                                <label for="searchEPL_Key" class="form-label">Attribute</label>
+                                <select id="searchEPL_Key" class="form-input">
                                     <option value="">-- Select --</option>
                                     <option value="TeamName">Team Name</option>
                                     <option value="Players.PlayerName">Player Name</option>
@@ -192,11 +200,12 @@
                                 </select>
                             </div>
                             <div>
-                                <label for="searchEPL_Value" class="block text-sm font-medium text-gray-700">Value</label>
-                                <input type="text" id="searchEPL_Value" class="form-input mt-1" placeholder="Enter search term">
+                                <label for="searchEPL_Value" class="form-label">Value</label>
+                                <input type="text" id="searchEPL_Value" class="form-input" placeholder="Enter search term">
                             </div>
-                            <div>
-                                <button onclick="searchEPLEntities()" class="btn btn-primary w-full">Search</button>
+                            <div class="flex space-x-2">
+                                <button onclick="searchEPLEntities()" class="btn btn-primary flex-grow">Search</button>
+                                <button onclick="clearEPLEntitySearch()" class="btn btn-secondary flex-grow">Clear</button>
                             </div>
                          </div>
                          <div id="searchEPLResults" class="hidden mt-4 overflow-x-auto">
@@ -209,7 +218,7 @@
 
                     <!-- API Response -->
                     <div class="bg-white rounded-lg shadow-md">
-                        <button id="response-toggle" class="w-full text-left p-4 font-semibold">Raw API Response</button>
+                        <button id="response-toggle" class="w-full text-left p-4 font-semibold hover:bg-slate-50 rounded-t-lg">Raw API Response</button>
                         <div id="response-content" class="hidden p-4 border-t border-gray-200">
                             <pre class="bg-gray-900 text-white p-4 rounded-md text-sm overflow-x-auto">Awaiting API call...</pre>
                         </div>

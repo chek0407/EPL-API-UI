@@ -52,7 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.sidebar-link').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            document.querySelector(link.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+            const targetSection = document.querySelector(link.getAttribute('href'));
+            if (targetSection) {
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+            }
             document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
             link.classList.add('active');
         });
@@ -153,6 +156,11 @@ async function getAllTeamsEPL() {
     }
 }
 
+function clearEPLTeamsList() {
+    eplTeamTableBody.innerHTML = '';
+    eplTeamListResultsDiv.classList.add('hidden');
+}
+
 async function searchEPLEntities() {
     const key = document.getElementById('searchEPL_Key').value;
     const value = document.getElementById('searchEPL_Value').value.trim();
@@ -197,6 +205,13 @@ async function searchEPLEntities() {
     } else {
         showToast(data.error || 'Failed to perform search.', 'error');
     }
+}
+
+function clearEPLEntitySearch() {
+    document.getElementById('searchEPL_Key').value = '';
+    document.getElementById('searchEPL_Value').value = '';
+    searchEPLTableBody.innerHTML = '';
+    searchEPLResultsDiv.classList.add('hidden');
 }
 
 // --- Manage Teams ---
@@ -303,6 +318,7 @@ async function updatePlayerEPL() {
         showToast(result.error || 'Failed to update player.', 'error');
     }
 }
+
 async function deletePlayerEPL() {
     const teamId = document.getElementById('deletePlayer_TeamID').value.trim();
     const playerId = document.getElementById('deletePlayer_PlayerID').value.trim();
