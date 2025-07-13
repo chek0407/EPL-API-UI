@@ -24,7 +24,7 @@ function showToast(message, type = 'info') {
     const toastIcon = document.getElementById('toast-icon');
 
     toastMessage.textContent = message;
-    
+
     let icon = '';
     toast.classList.remove('bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700', 'bg-blue-100', 'text-blue-700');
 
@@ -141,11 +141,14 @@ async function getAllTeamsEPL() {
             teams.forEach(team => {
                 const row = eplTeamTableBody.insertRow();
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${team.TeamID}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.TeamName}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.Stadium}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.Manager}</td>
-                `;
+  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600 hover:underline cursor-pointer" onclick="getTeamFullDetails('${team.TeamID}')">
+    ${team.TeamID}
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.TeamName}</td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.Stadium}</td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${team.Manager}</td>
+`;
+
             });
             eplTeamListResultsDiv.classList.remove('hidden');
         } else {
@@ -159,6 +162,50 @@ async function getAllTeamsEPL() {
 function clearEPLTeamsList() {
     eplTeamTableBody.innerHTML = '';
     eplTeamListResultsDiv.classList.add('hidden');
+}
+async function getTeamFullDetails(teamId) {
+    const endpoint = `/epl/teams/${encodeURIComponent(teamId)}/details`;
+    const data = await callApi(endpoint);
+
+    const section = document.getElementById("teamFullDetailsSection");
+    const infoDiv = document.getElementById("teamInfoSummary");
+    const tableBody = document.getElementById("teamFullDetailsTableBody");
+
+    section.classList.add("hidden");
+    tableBody.innerHTML = "";
+    infoDiv.innerHTML = "";
+
+    if (data && data.team) {
+        const team = data.team;
+        const players = data.players || [];
+
+        infoDiv.innerHTML = `
+          <strong>ID:</strong> ${team.TeamID}<br/>
+          <strong>Name:</strong> ${team.TeamName}<br/>
+          <strong>Stadium:</strong> ${team.Stadium}<br/>
+          <strong>Founded:</strong> ${team.Founded}<br/>
+          <strong>Manager:</strong> ${team.Manager}
+        `;
+
+        if (players.length === 0) {
+            showToast("No players found for this team.", "info");
+        }
+
+        players.forEach(player => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${player.PlayerName}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.Position}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.Number}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.Age}</td>
+            `;
+        });
+
+        section.classList.remove("hidden");
+        showToast(`Loaded team "${team.TeamName}" details.`, "success");
+    } else {
+        showToast(data?.error || "Failed to fetch team details.", "error");
+    }
 }
 
 async function searchEPLEntities() {
@@ -185,7 +232,7 @@ async function searchEPLEntities() {
         data.results.forEach(team => {
             const players = team.Players || [];
             if (players.length > 0) {
-                 players.forEach(player => {
+                players.forEach(player => {
                     const row = searchEPLTableBody.insertRow();
                     row.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${team.TeamName}</td>
@@ -196,8 +243,8 @@ async function searchEPLEntities() {
                     `;
                 });
             } else {
-                 const row = searchEPLTableBody.insertRow();
-                 row.innerHTML = `<td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${team.TeamName} (Team Match)</td>`;
+                const row = searchEPLTableBody.insertRow();
+                row.innerHTML = `<td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${team.TeamName} (Team Match)</td>`;
             }
         });
         searchEPLResultsDiv.classList.remove('hidden');
@@ -287,7 +334,7 @@ async function addPlayerEPL() {
 async function updatePlayerEPL() {
     const teamId = document.getElementById('updatePlayer_TeamID').value.trim();
     const playerId = document.getElementById('updatePlayer_PlayerID').value.trim();
-    
+
     if (!teamId || !playerId) {
         showToast('Team ID and Player ID are required.', 'error');
         return;
@@ -308,7 +355,7 @@ async function updatePlayerEPL() {
         showToast('Please enter at least one field to update.', 'error');
         return;
     }
-    
+
     const endpoint = `/epl/players/${encodeURIComponent(teamId)}/${encodeURIComponent(playerId)}`;
     const result = await callApi(endpoint, 'PUT', updatedPlayerData);
 
