@@ -177,7 +177,7 @@ async function getPlayersFromTeam() {
         return;
     }
 
-    const endpoint = `/epl/teams/${encodeURIComponent(teamId)}/players`;
+    const endpoint = `/epl/teams/${encodeURIComponent(teamId)}/details`;
     const data = await callApi(endpoint);
 
     const section = document.getElementById("teamPlayersOnlySection");
