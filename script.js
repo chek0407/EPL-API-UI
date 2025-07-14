@@ -169,6 +169,53 @@ function clearEPLTeamsList() {
         teamDetailsSection.classList.add('hidden');
     }
 }
+
+async function getPlayersFromTeam() {
+    const teamId = document.getElementById("getPlayers_TeamID").value.trim();
+    if (!teamId) {
+        showToast("Please enter a Team ID.", "error");
+        return;
+    }
+
+    const endpoint = `/epl/teams/${encodeURIComponent(teamId)}/players`;
+    const data = await callApi(endpoint);
+
+    const section = document.getElementById("teamPlayersOnlySection");
+    const tableBody = document.getElementById("teamPlayersOnlyTableBody");
+
+    section.classList.add("hidden");
+    tableBody.innerHTML = "";
+
+    if (data && Array.isArray(data.players)) {
+        if (data.players.length === 0) {
+            showToast("This team has no players.", "info");
+            return;
+        }
+
+        data.players.forEach(player => {
+            const row = tableBody.insertRow();
+            row.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${player.PlayerName}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.Position}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.Number}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.Age}</td>
+            `;
+        });
+
+        section.classList.remove("hidden");
+        showToast(`Loaded ${data.players.length} players from team ${teamId}.`, "success");
+    } else {
+        showToast(data?.error || "Failed to fetch players.", "error");
+    }
+}
+
+function clearPlayersFromTeam() {
+    document.getElementById("getPlayers_TeamID").value = "";
+    document.getElementById("teamPlayersOnlyTableBody").innerHTML = "";
+    document.getElementById("teamPlayersOnlySection").classList.add("hidden");
+}
+
+
 async function getTeamFullDetails(teamId) {
     const endpoint = `/epl/teams/${encodeURIComponent(teamId)}/details`;
     const data = await callApi(endpoint);

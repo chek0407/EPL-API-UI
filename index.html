@@ -268,6 +268,37 @@
                             </div>
 
                         </div>
+                        <!-- Get All Players From Team -->
+                        <div id="section-team-players" class="bg-white p-6 rounded-lg shadow-md">
+                            <h3 class="text-xl font-semibold mb-4">Get All Players by Team ID</h3>
+                            <div class="flex flex-wrap gap-4 items-end">
+                                <div>
+                                    <label class="form-label" for="getPlayers_TeamID">Team ID</label>
+                                    <input id="getPlayers_TeamID" class="form-input" placeholder="e.g., MCI" />
+                                </div>
+                                <button onclick="getPlayersFromTeam()" class="btn btn-primary">Get Players</button>
+                                <button onclick="clearPlayersFromTeam()" class="btn btn-secondary">Clear</button>
+                            </div>
+
+                            <div id="teamPlayersOnlySection" class="hidden mt-6 overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Player
+                                                Name</th>
+                                            <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Position
+                                            </th>
+                                            <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Number
+                                            </th>
+                                            <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Age</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="teamPlayersOnlyTableBody" class="bg-white divide-y divide-gray-200">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                         <!-- Add Team -->
                         <div class="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200">
                             <h4 class="font-semibold mb-3">Add New Team</h4>
