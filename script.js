@@ -162,6 +162,12 @@ async function getAllTeamsEPL() {
 function clearEPLTeamsList() {
     eplTeamTableBody.innerHTML = '';
     eplTeamListResultsDiv.classList.add('hidden');
+
+    // Also hide team details section
+    const teamDetailsSection = document.getElementById('teamFullDetailsSection');
+    if (teamDetailsSection) {
+        teamDetailsSection.classList.add('hidden');
+    }
 }
 async function getTeamFullDetails(teamId) {
     const endpoint = `/epl/teams/${encodeURIComponent(teamId)}/details`;
