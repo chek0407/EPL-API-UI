@@ -118,7 +118,21 @@ async function callApi(endpoint, method = 'GET', body = null) {
         const data = await response.json();
         updateResponseDisplay(data);
         if (!response.ok) {
-            return { error: data.message || data.error || `API Error (${response.status})` };
+            const error = await response.json();
+
+            if (response.status === 401) {
+                showToast("Session expired. Please log in again.", "error");
+
+                // Clear token and reset view
+                localStorage.removeItem("access_token");
+                document.getElementById("protected-content").classList.add("hidden");
+                document.getElementById("login-section").classList.remove("hidden");
+
+                return null;
+            }
+
+            showToast(`API call error for ${endpoint}: ${error?.error || error?.msg || response.statusText}`, "error");
+            return null;
         }
         return data;
     } catch (error) {
