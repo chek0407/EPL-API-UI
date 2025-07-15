@@ -456,3 +456,10 @@ async function deletePlayerEPL() {
         showToast(result.error || 'Failed to delete player.', 'error');
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+        loginSection.classList.add('hidden');
+        protectedContent.classList.remove('hidden');
+    }
+});
