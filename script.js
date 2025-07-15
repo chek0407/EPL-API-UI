@@ -1,5 +1,5 @@
 let apiBaseUrl = 'https://epl-flask-api.onrender.com';
-let jwtToken = null;
+//let jwtToken = null;
 
 // --- DOM Element Cache ---
 const loginSection = document.getElementById('login-section');
@@ -85,12 +85,12 @@ async function loginUser() {
         updateResponseDisplay(data);
 
         if (response.ok) {
-            jwtToken = data.access_token;
+            localStorage.setItem("access_token", data.access_token);
             showToast('Login successful!', 'success');
             loginSection.classList.add('hidden');
             protectedContent.classList.remove('hidden');
         } else {
-            jwtToken = null;
+            localStorage.removeItem("access_token");
             showToast(data.message || 'Login failed', 'error');
         }
     } catch (error) {
@@ -100,14 +100,18 @@ async function loginUser() {
 }
 
 async function callApi(endpoint, method = 'GET', body = null) {
-    if (!jwtToken) {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
         showToast('You need to log in first!', 'error');
         return null;
     }
+
     const headers = {
-        'Authorization': `Bearer ${jwtToken}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
+
     const options = { method, headers };
     if (body) {
         options.body = JSON.stringify(body);
@@ -115,25 +119,23 @@ async function callApi(endpoint, method = 'GET', body = null) {
 
     try {
         const response = await fetch(`${apiBaseUrl}${endpoint}`, options);
+
         const data = await response.json();
         updateResponseDisplay(data);
-        if (!response.ok) {
-            const error = await response.json();
 
+        if (!response.ok) {
             if (response.status === 401) {
                 showToast("Session expired. Please log in again.", "error");
-
-                // Clear token and reset view
                 localStorage.removeItem("access_token");
                 document.getElementById("protected-content").classList.add("hidden");
                 document.getElementById("login-section").classList.remove("hidden");
-
                 return null;
             }
 
-            showToast(`API call error for ${endpoint}: ${error?.error || error?.msg || response.statusText}`, "error");
+            showToast(`API call error for ${endpoint}: ${data?.error || data?.msg || response.statusText}`, "error");
             return null;
         }
+
         return data;
     } catch (error) {
         console.error(`API call error for ${endpoint}:`, error);
@@ -142,7 +144,6 @@ async function callApi(endpoint, method = 'GET', body = null) {
         return { error: `A network error occurred: ${error.message}` };
     }
 }
-
 
 // --- EPL Functions ---
 
