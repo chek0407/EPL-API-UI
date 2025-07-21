@@ -406,6 +406,33 @@ async function addPlayerEPL() {
         showToast(result.error || 'Failed to add player.', 'error');
     }
 }
+async function transferPlayerEPL() {
+    const fromTeamId = document.getElementById("transfer_from_team").value.trim();
+    const toTeamId = document.getElementById("transfer_to_team").value.trim();
+    const playerId = document.getElementById("transfer_player_id").value.trim();
+    const newPlayerId = document.getElementById("transfer_new_id").value.trim();
+    const newNumber = document.getElementById("transfer_new_number").value.trim();
+
+    if (!fromTeamId || !toTeamId || !playerId) {
+        showToast("From Team ID, To Team ID, and Player ID are required", "error");
+        return;
+    }
+
+    const payload = {
+        from_team_id: fromTeamId,
+        to_team_id: toTeamId,
+        player_id: playerId
+    };
+
+    if (newPlayerId) payload.new_player_id = newPlayerId;
+    if (newNumber) payload.new_number = parseInt(newNumber);
+
+    const response = await callApi("/epl/transfer_player", "POST", payload);
+
+    if (response && !response.error) {
+        showToast("Player transferred successfully!", "success");
+    }
+}
 
 async function updatePlayerEPL() {
     const teamId = document.getElementById('updatePlayer_TeamID').value.trim();
