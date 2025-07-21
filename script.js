@@ -464,3 +464,27 @@ async function deletePlayerEPL() {
         showToast(result.error || 'Failed to delete player.', 'error');
     }
 }
+// 🔁 Background session timeout checker (runs every 60 seconds)
+setInterval(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+
+    const payloadBase64 = token.split('.')[1];
+    if (!payloadBase64) return;
+
+    try {
+        const payload = JSON.parse(atob(payloadBase64));
+        const exp = payload.exp;  // Expiration time in seconds (Unix timestamp)
+        const now = Math.floor(Date.now() / 1000);
+
+        if (exp && now >= exp) {
+            // Token expired — log out
+            localStorage.removeItem("access_token");
+            document.getElementById("protected-content").classList.add("hidden");
+            document.getElementById("login-section").classList.remove("hidden");
+            showToast("Session expired. Please log in again.", "error");
+        }
+    } catch (e) {
+        console.error("Error decoding token:", e);
+    }
+}, 60000); // Checks every 60 seconds
