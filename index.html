@@ -294,7 +294,11 @@
                                 <div><label for="addTeam_Manager" class="form-label">Manager</label><input type="text"
                                         id="addTeam_Manager" class="form-input" placeholder="e.g., E. ten Hag"></div>
                             </div>
-                            <button onclick="addTeamEPL()" class="btn btn-primary mt-4">Add Team</button>
+                            <div class="mt-4 flex gap-2">
+                                <button onclick="addTeamEPL()" class="btn btn-primary">Add Team</button>
+                                <button onclick="clearAddTeamForm()" class="btn btn-secondary">Clear</button>
+                            </div>
+
                         </div>
                         <!-- Delete Team -->
                         <div class="p-4 bg-red-50 rounded-md border border-red-200">
@@ -303,7 +307,11 @@
                                 <div class="flex-grow"><label for="deleteTeam_TeamID" class="form-label">Team ID to
                                         Delete</label><input type="text" id="deleteTeam_TeamID" class="form-input"
                                         placeholder="e.g., MUN"></div>
-                                <div><button class="btn btn-danger" onclick="deleteTeamEPL()">Delete</button></div>
+                                <div class="flex gap-2">
+                                    <button class="btn btn-danger" onclick="deleteTeamEPL()">Delete</button>
+                                    <button class="btn btn-secondary" onclick="clearDeleteTeamForm()">Clear</button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -330,7 +338,11 @@
                                 <div><label for="addPlayer_Age" class="form-label">Age</label><input type="number"
                                         id="addPlayer_Age" class="form-input"></div>
                             </div>
-                            <button onclick="addPlayerEPL()" class="btn btn-primary mt-4">Add Player</button>
+                            <div class="mt-4 flex gap-2">
+                                <button onclick="addPlayerEPL()" class="btn btn-primary">Add Player</button>
+                                <button onclick="clearAddPlayerForm()" class="btn btn-secondary">Clear</button>
+                            </div>
+
                         </div>
                         <!-- Update Player -->
                         <div class="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200">
@@ -353,7 +365,11 @@
                                         type="number" id="updatePlayer_Age" class="form-input" placeholder="(optional)">
                                 </div>
                             </div>
-                            <button onclick="updatePlayerEPL()" class="btn btn-primary mt-4">Update Player</button>
+                            <div class="mt-4 flex gap-2">
+                                <button onclick="updatePlayerEPL()" class="btn btn-primary">Update Player</button>
+                                <button onclick="clearUpdatePlayerForm()" class="btn btn-secondary">Clear</button>
+                            </div>
+
                         </div>
 
                         <!-- Transfer Player -->
@@ -386,7 +402,11 @@
                                         placeholder="e.g., 7">
                                 </div>
                             </div>
-                            <button onclick="transferPlayerEPL()" class="btn btn-primary mt-4">Transfer Player</button>
+                            <div class="mt-4 flex gap-2">
+                                <button onclick="transferPlayerEPL()" class="btn btn-primary">Transfer Player</button>
+                                <button onclick="clearTransferPlayerForm()" class="btn btn-secondary">Clear</button>
+                            </div>
+
                         </div>
                         <!-- Delete Player -->
                         <div class="p-4 bg-red-50 rounded-md border border-red-200">

@@ -491,6 +491,45 @@ async function deletePlayerEPL() {
         showToast(result.error || 'Failed to delete player.', 'error');
     }
 }
+
+function clearAddTeamForm() {
+    document.getElementById("addTeam_TeamID").value = "";
+    document.getElementById("addTeam_TeamName").value = "";
+    document.getElementById("addTeam_Stadium").value = "";
+    document.getElementById("addTeam_Founded").value = "";
+    document.getElementById("addTeam_Manager").value = "";
+}
+
+function clearDeleteTeamForm() {
+    document.getElementById("deleteTeam_TeamID").value = "";
+}
+
+function clearAddPlayerForm() {
+    document.getElementById("addPlayer_TeamID").value = "";
+    document.getElementById("addPlayer_PlayerID").value = "";
+    document.getElementById("addPlayer_PlayerName").value = "";
+    document.getElementById("addPlayer_Position").value = "";
+    document.getElementById("addPlayer_Number").value = "";
+    document.getElementById("addPlayer_Age").value = "";
+}
+
+function clearUpdatePlayerForm() {
+    document.getElementById("updatePlayer_TeamID").value = "";
+    document.getElementById("updatePlayer_PlayerID").value = "";
+    document.getElementById("updatePlayer_PlayerName").value = "";
+    document.getElementById("updatePlayer_Position").value = "";
+    document.getElementById("updatePlayer_Number").value = "";
+    document.getElementById("updatePlayer_Age").value = "";
+}
+
+function clearTransferPlayerForm() {
+    document.getElementById("transfer_from_team").value = "";
+    document.getElementById("transfer_to_team").value = "";
+    document.getElementById("transfer_player_id").value = "";
+    document.getElementById("transfer_new_id").value = "";
+    document.getElementById("transfer_new_number").value = "";
+}
+
 // 🔁 Background session timeout checker (runs every 60 seconds)
 setInterval(() => {
     const token = localStorage.getItem("access_token");
