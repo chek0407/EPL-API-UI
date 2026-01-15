@@ -300,6 +300,25 @@
                             </div>
 
                         </div>
+
+                        <!-- Update Team Manager -->
+                        <div class="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200">
+                            <h4 class="font-semibold mb-3">Update Team Manager</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="updateManager_TeamID" class="form-label">Team ID</label>
+                                    <input type="text" id="updateManager_TeamID" class="form-input" placeholder="e.g., ARS">
+                                </div>
+                                <div>
+                                    <label for="updateManager_Name" class="form-label">New Manager Name</label>
+                                    <input type="text" id="updateManager_Name" class="form-input" placeholder="e.g., Mikel Arteta">
+                                </div>
+                            </div>
+                            <button onclick="updateTeamManager()" class="btn btn-primary mt-4">
+                                Update Manager
+                            </button>
+                        </div>
+
                         <!-- Delete Team -->
                         <div class="p-4 bg-red-50 rounded-md border border-red-200">
                             <h4 class="font-semibold mb-3 text-red-800">Delete Team</h4>
