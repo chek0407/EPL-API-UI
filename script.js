@@ -360,6 +360,28 @@ async function addTeamEPL() {
         showToast(result.error || 'Failed to add team.', 'error');
     }
 }
+// --- Update Team Manager ---
+async function updateTeamManager() {
+    const teamId = document.getElementById("updateManager_TeamID").value.trim();
+    const managerName = document.getElementById("updateManager_Name").value.trim();
+
+    if (!teamId || !managerName) {
+        showToast("Team ID and Manager name are required.", "error");
+        return;
+    }
+
+    const endpoint = `/epl/teams/${encodeURIComponent(teamId)}/manager`;
+    const payload = { Manager: managerName };
+
+    const result = await callApi(endpoint, "PUT", payload);
+
+    if (result && !result.error) {
+        showToast(result.message || "Manager updated successfully.", "success");
+        getAllTeamsEPL(); // refresh list
+    } else {
+        showToast(result?.error || "Failed to update manager.", "error");
+    }
+}
 
 async function deleteTeamEPL() {
     const teamId = document.getElementById('deleteTeam_TeamID').value.trim();
