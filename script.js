@@ -218,6 +218,7 @@ async function getPlayersFromTeam() {
         data.players.forEach(player => {
             const row = tableBody.insertRow();
             row.innerHTML = `
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.PlayerID}</td>  
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${player.PlayerName}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.Position}</td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${player.Number}</td>
